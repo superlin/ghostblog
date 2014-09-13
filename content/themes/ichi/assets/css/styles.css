@@ -2,7 +2,7 @@
 /* Generic */
 /* line 5, ../scss/styles.scss */
 body {
-  font-family: "open sans", "helvetica neue", helvetica, arial, sans-serif;
+  font-family: "open sans", "helvetica neue", "Microsoft YaHei", "WenQuanYi Micro Hei", helvetica, arial, sans-serif;
   background: url("../images/main-background.jpg") repeat;
 }
 /* line 8, ../scss/styles.scss */
