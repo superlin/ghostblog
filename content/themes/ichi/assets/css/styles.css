@@ -693,7 +693,6 @@ a:hover {
   background: #f1f0ea;
   border: 1px solid #dddbcc;
   width: 100%;
-  padding: 10px;
   font-family: Inconsolata, monospace;
   font-size: 0.9em;
   white-space: pre;
@@ -706,9 +705,7 @@ a:hover {
   font-size: inherit;
   white-space: -moz-pre-wrap;
   white-space: pre-wrap;
-  background: transparent;
   border: none;
-  padding: 0;
   font-family: Inconsolata, monospace;
   border-radius: 2px;
   line-height: 1.5;
