@@ -19,18 +19,18 @@
         <a href="{{url}}">{{content characters="1"}}</a>
         <div>
         <header class="post-header">
-            <span class="post-meta"><time datetime="{{date format='YYYY-MM-DD'}}">{{date format="DD MMM YYYY"}}</time> </span>
+            <span class="post-meta"><time datetime="{{date format='YYYY-MM-DD'}}">{{date format="YYYY年MM月DD日"}}</time> </span>
             <h2 class="post-title"><a href="{{url}}">{{{title}}}</a></h2>
 
         </header>
             <section class="post-excerpt">
                 <p>{{excerpt characters="400"}}&hellip;</p>
             </section>
-            <a class="button read-more right small" href="{{url}}">Read more</a>
+            <a class="button read-more right small" href="{{url}}">阅读全文</a>
             {{#if tags}}
-            <aside class="tags fa fa-tags">{{tags prefix="Posted on "}}</aside>
+            <aside class="tags fa fa-tags">{{tags prefix="标签："}}</aside>
             {{else}}
-            <aside class="tags fa fa-tags">No tag</aside>
+            <aside class="tags fa fa-tags">无标签</aside>
             {{/if}}
             <div class="clearfix"></div>
         </div>
@@ -38,7 +38,7 @@
     {{else}}
     <article class="{{post_class}}">
         <header class="post-header">
-            <span class="post-meta"><time datetime="{{date format='YYYY-MM-DD'}}">{{date format="DD MMM YYYY"}}</time> </span>
+            <span class="post-meta"><time datetime="{{date format='YYYY-MM-DD'}}">{{date format="YYYY年MM月DD日"}}</time> </span>
             <h2 class="post-title"><a href="{{url}}">{{{title}}}</a></h2>
 
         </header>
