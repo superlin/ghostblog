@@ -1,0 +1,103 @@
+{{!< default}}
+
+{{> header}}
+
+<main class="main_pixel post" role="main">
+
+	{{#post}}
+		
+		<div id="trampezium"></div>
+
+		<article class="article_pixel" role="article" itemscope itemtype="http://schema.org/Article" style="display:table;">
+		
+			<header class="postheader_pixel">
+
+				<time class="date_pixel" datetime="{{date format="YYYY-MM-DD"}}" itemprop="datePublished">
+
+					<span class="icon-clock"></span>{{date format='dddd DD MMM YYYY'}}
+
+				</time>
+
+				<h1 class="posttitle_pixel" itemprop="headline">
+
+					{{title}}
+
+				</h1>
+				
+			</header>
+
+			<div class="postcontent_pixel" itemprop="articleBody">
+
+				{{content}}
+
+			</div>
+
+			{{#if tags}}
+			
+				<div class="posttags_pixel">
+
+					<p><span class="icon-tag"></span> {{tags separator=" | "}}</p>
+
+				</div>
+
+			{{/if}}
+
+			{{#if author.bio}}
+				
+				<footer class="postfooter_pixel">
+
+					<address itemscope itemtype="http://schema.org/Person">
+
+						<p class="footer_header">Author:</p>
+
+						{{#if author.cover}}
+						<div class="authorimage_pixel"><img src="{{author.cover}}" itemprop="image" /></div>
+						{{/if}}
+
+						<h4 class="authorname_pixel"><span itemprop="author">
+
+							{{author.name}}
+
+						</span></h4>
+
+						{{#if author.website}}
+
+							<div class="authorwebsite_pixel"><a href="{{author.website}}" itemprop="url">
+
+								{{author.website}}
+
+							</a></div>
+						
+						{{/if}}
+
+					</address>
+					
+					<div class="authorbio_pixel">
+
+						<p class="footer_header">Bio:</p>
+
+						<p>{{author.bio}}</p>
+
+					</div>
+				
+				</footer>
+
+			{{/if}}
+
+		</article>
+
+	{{/post}}
+
+	{{#if pagination}}
+
+		<div class="pagination_pixel">
+
+			{{{pagination}}}
+
+		</div>
+
+	{{/if}}
+
+</main>
+
+{{> footer}}
