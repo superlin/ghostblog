@@ -771,7 +771,6 @@ a:hover {
   background: #eeeeee;
   position: relative;
   overflow: hidden;
-  padding: 10px;
 }
 /* line 612, ../scss/styles.scss */
 .post-template .post .author section h4 {
@@ -802,7 +801,6 @@ a:hover {
   text-align: left;
   color: #4a89dc;
   float: left;
-  /*clear: both;*/
   font-size: 0.8rem;
   line-height: 1.2;
 }
