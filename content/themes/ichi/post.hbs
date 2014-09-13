@@ -43,7 +43,7 @@
                         <span style="color: white">关于作者</span>
                     </header>
                     <section>
-                        <h4><a href="{{@blog.url}}/author/{{author.slug}}">{{author.name}}</a></h4>
+                        <a href="{{@blog.url}}/author/{{author.slug}}"><h4>{{author.name}}</h4></a>
                         {{#if author.image}}<img src="{{author.image}}">{{/if}}
                         {{#if author.location}}<span>{{author.location}}</span>{{/if}}
                         {{#if author.website}}<a href="{{author.website}}">{{author.website}}</a>{{/if}}
