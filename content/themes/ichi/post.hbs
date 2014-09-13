@@ -44,19 +44,20 @@
                         <table>
                             <tr>
                                 <td>
-                                    <div>
-                                        <a href="{{@blog.url}}/author/{{author.slug}}"><h4>{{author.name}}</h4></a>
-                                    </div>
-                                    {{#if author.location}}<div><span>{{author.location}}</span></div>{{/if}}
-                                    {{#if author.website}}<div><a href="{{author.website}}">{{author.website}}</a></div>{{/if}}
+                                    <table>
+                                        <tr>
+                                            <td><a href="{{@blog.url}}/author/{{author.slug}}"><h4>{{author.name}}</h4></td>
+                                        </tr>
+                                        {{#if author.location}}<tr>
+                                            <td><span>{{author.location}}</span></td>
+                                        </tr>{{/if}}
+                                        {{#if author.website}}<tr>
+                                            <td><a href="{{author.website}}">{{author.website}}</a></td>
+                                        </tr>{{/if}}
+                                    </table>
                                 </td>
                                 {{#if author.image}}<td><img src="{{author.image}}"></td>{{/if}}
                             </tr>
-                            {{!-- <a href="{{@blog.url}}/author/{{author.slug}}"><h4>{{author.name}}</h4></a>
-                            {{#if author.image}}<img src="{{author.image}}">{{/if}}
-                            {{#if author.location}}<span>{{author.location}}</span>{{/if}}
-                            {{#if author.website}}<a href="{{author.website}}">{{author.website}}</a>{{/if}}
-                            <div style="clear:both"></div> --}}
                         </table>
                     </section>
                     <footer>
