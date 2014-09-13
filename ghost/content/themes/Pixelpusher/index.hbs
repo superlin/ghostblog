@@ -1,0 +1,59 @@
+{{!< default}}
+
+{{> header}}
+
+<main class="main_pixel headline" role="main">
+
+	{{#foreach posts}}
+
+		<article class="article_pixel" role="article" itemscope itemtype="http://schema.org/Article">
+
+			<div class="image_container"><a href="{{{url}}}"></a></div>
+
+			<div class="post_container">
+
+				<header class="postheader_pixel">
+
+					<time class="date_pixel" datetime="{{date format="YYYY-MM-DD"}}" itemprop="datePublished">
+						
+						<span class="icon-clock"></span>{{date published_at timeago="true"}} {{#if tags}} <span>in</span> {{tags separator=" / "}} {{/if}}
+
+					</time>
+
+					<h1 class="posttitle_pixel" itemprop="headline">
+						<a href="{{{url}}}" rel="bookmark">
+
+							{{title}}
+
+						</a>
+					</h1>
+
+				</header>
+
+				<div class="postcontent_pixel" itemprop="articleBody">
+
+					{{content characters="0"}}
+
+					{{excerpt characters="150"}}...
+
+				</div>
+
+			</div>
+
+		</article>
+
+	{{/foreach}}
+
+	{{#if pagination}}
+
+		<div class="pagination_pixel">
+
+			{{{pagination}}}
+
+		</div>
+
+	{{/if}}
+
+</main>
+
+{{> footer}}
