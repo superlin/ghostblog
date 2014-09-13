@@ -3,14 +3,14 @@
 $color: #4a89dc;
 $black: #333; /* Generic */
 body {
-    font-family: "open sans", "helvetica neue", helvetica, arial, sans-serif;
+    font-family: "Hiragino Sans GB", "Microsoft YaHei", "open sans", "helvetica neue", helvetica, arial, sans-serif;
     background: url('../images/main-background.jpg') repeat;
     > .row {
         max-width: 100%;
     }
 }
 h1 {
-    font-family: "source sans pro", "helvetica neue", helvetica, arial, sans-serif;
+    font-family: "Hiragino Sans GB", "Microsoft YaHei", "source sans pro", "helvetica neue", helvetica, arial, sans-serif;
 }
 button, .button, a, span, li, .head-area:after, hr, img, .read-more:before, main, .post, .head-area {
     @include transition(.3s all);
@@ -600,7 +600,7 @@ a {
                     color: darken($color, 12%);
                     font-size: 1.4rem;
                     font-weight: 900;
-                    font-family: "source sans pro", arial, sans-serif;
+                    font-family: "Hiragino Sans GB", "Microsoft YaHei", "source sans pro", arial, sans-serif;
                     text-transform: uppercase;
                 }
             }
