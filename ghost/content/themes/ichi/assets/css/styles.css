@@ -789,7 +789,6 @@ a:hover {
   float: left;
   font-size: 0.8rem;
   line-height: 1.2;
-  padding: 10px 100px 10px 0;
 }
 /* line 630, ../scss/styles.scss */
 .post-template .post .author section img {
@@ -801,7 +800,6 @@ a:hover {
 /* line 638, ../scss/styles.scss */
 .post-template .post .author section a {
   text-align: left;
-  padding-right: 50px;
   color: #4a89dc;
   float: left;
   /*clear: both;*/
