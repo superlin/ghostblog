@@ -34,15 +34,14 @@
      {{!语法高亮}}
     <link href="http://cdn.bootcss.com/highlight.js/8.2/styles/monokai.min.css" rel="stylesheet">
     <script src="http://cdn.bootcss.com/highlight.js/8.2/highlight.min.js"></script>
+</head>
+<body class="{{bodyClass}}" data-apps="{{apps}}" data-filestorage="{{file_storage}}" data-blogurl="{{blog_url}}">
+
+    {{{ghost_script_tags}}}
     <script>
         $(document).ready(function() {
             hljs.initHighlightingOnLoad();
         });
     </script>
-</head>
-<body class="{{bodyClass}}" data-apps="{{apps}}" data-filestorage="{{file_storage}}" data-blogurl="{{blog_url}}">
-
-    {{{ghost_script_tags}}}
-
 </body>
 </html>
