@@ -12,21 +12,21 @@
 
             <h1 class="post-title">{{{title}}}</h1>
 
-            <span class="post-meta label"><time datetime="{{date format="YYYY-MM-DD"}}">{{date format='DD MMM YYYY'}}</time></span>
+            <span class="post-meta label"><time datetime="{{date format="YYYY-MM-DD"}}">{{date format='YYYY年MM月DD日'}}</time></span>
 
             <section class="post-content">
                 {{content}}
                         {{#if tags}}
-                        <aside class="tags fi-pricetag-multiple">{{tags prefix="Posted on "}}</aside>
+                        <aside class="tags fi-pricetag-multiple">{{tags prefix="标签："}}</aside>
                         {{else}}
-                        <aside class="tags fi-pricetag-multiple">No tag</aside>
+                        <aside class="tags fi-pricetag-multiple">无标签</aside>
                         {{/if}}
             </section>
             <hr>
             <footer class="post-footer">
 
                 <section class="share">
-                    <h4>Liked this post ? Share it.</h4>
+                    <h4>喜欢这篇文章? 立即分享.</h4>
                     <a class="fi-social-facebook" href="https://www.facebook.com/sharer/sharer.php?u={{url absolute="true"}}"
                         onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
                     </a>
@@ -40,7 +40,7 @@
 
                 <section class="author">
                     <header>
-                        <span>About the author</span>
+                        <span>关于作者</span>
                     </header>
                     <section>
                         <h4>{{author.name}}</h4>
@@ -59,7 +59,7 @@
             </footer>
 
         {{/post}}
-        <h3 class="title-disqus"><span class="fi-comments"></span>Discussions</h3>
+        <h3 class="title-disqus"><span class="fi-comments"></span>讨论区</h3>
         <div id="disqus_thread"></div>
 <script type="text/javascript">
     var disqus_shortname = 'example'; // required: replace example with your forum shortname
