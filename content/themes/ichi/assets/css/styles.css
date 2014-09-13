@@ -777,7 +777,7 @@ a:hover {
 .post-template .post .author section h4 {
   margin: 0;
   text-align: left;
-  padding-right: 100px;
+  /*padding-right: 100px;*/
   color: #333333;
   font-weight: 700;
   float: left;
@@ -807,7 +807,7 @@ a:hover {
 /* line 638, ../scss/styles.scss */
 .post-template .post .author section a {
   text-align: left;
-  padding-right: 100px;
+  /* padding-right: 100px; */
   color: #4a89dc;
   float: left;
   clear: both;
