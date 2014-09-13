@@ -37,7 +37,7 @@ config = {
             // Host to be passed to node's `net.Server#listen()`
             host: '172.246.241.191',
             // Port to be passed to node's `net.Server#listen()`, for iisnode set this to `process.env.PORT`
-            port: '2368'
+            port: '80'
         },
         paths: {
             contentPath: path.join(__dirname, '/content/')
@@ -49,7 +49,16 @@ config = {
     // Configure your URL and mail settings here
     production: {
         url: 'http://blog.liuwanlin.info',
-        mail: {},
+        mail: {
+            transport: 'SMTP',
+            options: {
+                service: 'Gmail',
+                auth: {
+                    user: 'lwl2blog@gmail.com', // mailgun username
+                    pass: 'liuwanlin'  // mailgun password
+                }
+            }
+        },
         database: {
             client: 'sqlite3',
             connection: {
@@ -61,7 +70,7 @@ config = {
             // Host to be passed to node's `net.Server#listen()`
             host: '172.246.241.191',
             // Port to be passed to node's `net.Server#listen()`, for iisnode set this to `process.env.PORT`
-            port: '2368'
+            port: '80'
         }
     },
 
