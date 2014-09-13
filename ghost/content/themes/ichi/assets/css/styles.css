@@ -780,7 +780,7 @@ a:hover {
   color: #333333;
   font-weight: 700;
   float: left;
-  clear: both;
+  /*clear: both;*/
 }
 /* line 621, ../scss/styles.scss */
 .post-template .post .author section span {
@@ -801,10 +801,10 @@ a:hover {
 /* line 638, ../scss/styles.scss */
 .post-template .post .author section a {
   text-align: left;
-  padding-right: 100px;
+  padding-right: 50px;
   color: #4a89dc;
   float: left;
-  clear: both;
+  /*clear: both;*/
   font-size: 0.8rem;
   line-height: 1.2;
 }
