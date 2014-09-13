@@ -788,19 +788,21 @@ a:hover {
   text-align: left;
   color: #4d4d4d;
   float: left;
-  clear: both;
+  /*clear: both;*/
   font-size: 0.8rem;
   line-height: 1.2;
-  padding: 10px 100px 10px 0;
+  /*padding: 10px 100px 10px 0;*/
+  padding: 10px 0;
 }
 /* line 630, ../scss/styles.scss */
 .post-template .post .author section img {
-  position: absolute;
-  right: -10px;
+  /*position: absolute;*/
+  /*right: 0;*/
   max-width: 120px;
   height: 100%;
   max-height: 120px;
-  bottom: 0;
+  float: right;
+  /*bottom: 0;*/
 }
 /* line 638, ../scss/styles.scss */
 .post-template .post .author section a {
