@@ -3374,6 +3374,9 @@ textarea.input-group-sm > .input-group-btn > .btn {
 
 .nav-pills > li {
   float: left;
+  text-align: center;
+  font-weight: bold;
+  background-color: rgba(0,0,0,0.04);
 }
 
 .nav-pills > li > a {
