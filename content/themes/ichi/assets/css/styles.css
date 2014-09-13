@@ -777,7 +777,6 @@ a:hover {
 .post-template .post .author section h4 {
   margin: 0;
   text-align: left;
-  padding-right: 100px;
   color: #333333;
   font-weight: 700;
   float: left;
@@ -788,20 +787,16 @@ a:hover {
   text-align: left;
   color: #4d4d4d;
   float: left;
-  /*clear: both;*/
   font-size: 0.8rem;
   line-height: 1.2;
   padding: 10px 100px 10px 0;
 }
 /* line 630, ../scss/styles.scss */
 .post-template .post .author section img {
-  /*position: absolute;*/
-  /*right: 0;*/
   max-width: 120px;
   height: 100%;
   max-height: 120px;
   float: right;
-  /*bottom: 0;*/
 }
 /* line 638, ../scss/styles.scss */
 .post-template .post .author section a {
