@@ -95,17 +95,17 @@
 </div>
 <script>
     var url = location.href;
-    var rss;
+    var rss = "";
     var par = new RegExp(/\/page\//i);
     var rsspar = new RegExp(/(\/tag\/)|(\/author\/)|(\/page\/)/i);
     if(rsspar.test(location.pathname) || location.pathname == "/"){
         if(par.test(url)){
             rss = url.replace(/\/page\//i, "/rss/");
         } else {
-            rss = url + "rss";
+            rss = url + "/rss";
         }
     } else {
-        rss = location.host + "rss";
+        rss = location.host + "/rss";
     }
     document.getElementById("rss-link").href = rss;
 </script>
