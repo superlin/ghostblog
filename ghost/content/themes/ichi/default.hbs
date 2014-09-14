@@ -104,10 +104,8 @@
         } else {
             rss = url + "/rss";
         }
-    } else {
-        rss = location.host + "/rss";
+        document.getElementById("rss-link").href = rss;
     }
-    document.getElementById("rss-link").href = rss;
 </script>
 
 <div class="small-16 medium-16 large-12 columns main-column left">
