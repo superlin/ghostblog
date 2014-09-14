@@ -531,7 +531,6 @@ coreHelpers.meta_title = function (options) {
         blog;
 
     if (_.isString(this.relativeUrl)) {
-        console.log("url:"+this.relativeUrl);
         blog = config.theme();
         if (!this.relativeUrl || this.relativeUrl === '/' || this.relativeUrl === '' || this.relativeUrl.match(/\/page/)) {
             title = blog.title;
@@ -546,7 +545,6 @@ coreHelpers.meta_title = function (options) {
         } else if(this.relativeUrl == "/contact/"){
             title = "联系我";
         }
-        console.log(title);
     }
 
     return filters.doFilter('meta_title', title).then(function (title) {
