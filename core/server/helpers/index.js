@@ -540,6 +540,10 @@ coreHelpers.meta_title = function (options) {
             title = this.tag.name + ' - ' + blog.title;
         } else if (this.author) {
             title = this.author.name + ' - ' + blog.title;
+        } else if(this.relativeUrl == "/about"){
+            title = "关于我";
+        } else if(this.relativeUrl == "/contact"){
+            title = "联系我";
         }
     }
 
