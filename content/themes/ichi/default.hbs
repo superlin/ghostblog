@@ -98,7 +98,7 @@
     var rss;
     var par = new RegExp(/\/page\//i);
     var rsspar = new RegExp(/(\/tag\/)|(\/author\/)|(\/page\/)/i);
-    if(rsspar.test(location.pathname) || /(\/)*/.test(location.pathname)){
+    if(rsspar.test(location.pathname) || location.pathname == "/"){
         if(par.test(url)){
             rss = url.replace(/\/page\//i, "/rss/");
         } else {
