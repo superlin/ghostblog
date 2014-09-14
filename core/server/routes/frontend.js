@@ -35,6 +35,10 @@ frontendRoutes = function () {
     router.get('/', frontend.homepage);
     router.get('*', frontend.single);
 
+    //其他
+    router.get('/about', frontend.about);
+    router.get('/contact', frontend.contact);
+
     return router;
 };
 
