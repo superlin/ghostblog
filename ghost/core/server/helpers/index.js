@@ -413,7 +413,7 @@ coreHelpers.body_class = function (options) {
         classes.push('archive-template');
     } else if (!this.relativeUrl || this.relativeUrl === '/' || this.relativeUrl === '') {
         classes.push('home-template');
-    } else if (post) {
+    } else if (post || this.relativeUrl == "/about/" || this.relativeUrl == "/contact/") {
         classes.push('post-template');
     }
 
