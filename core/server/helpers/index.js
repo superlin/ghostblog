@@ -531,26 +531,22 @@ coreHelpers.meta_title = function (options) {
         blog;
 
     if (_.isString(this.relativeUrl)) {
-        //console.log("地址："+this.relativeUrl);
+        console.log("url:"+this.relativeUrl);
         blog = config.theme();
         if (!this.relativeUrl || this.relativeUrl === '/' || this.relativeUrl === '' || this.relativeUrl.match(/\/page/)) {
-            console.log(0);
             title = blog.title;
         } else if (this.post) {
-            console.log(1);
             title = this.post.title;
         } else if (this.tag) {
-            console.log(2);
             title = this.tag.name + ' - ' + blog.title;
         } else if (this.author) {
-            console.log(3);
             title = this.author.name + ' - ' + blog.title;
         } else if(this.relativeUrl == "about/"){
-            console.log(4);
             title = "关于我";
         } else if(this.relativeUrl == "contact/"){
             title = "联系我";
         }
+        console.log(title);
     }
 
     return filters.doFilter('meta_title', title).then(function (title) {
