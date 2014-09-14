@@ -537,8 +537,7 @@ a:hover {
 }
 /* line 417, ../scss/styles.scss */
 .post .read-more:before {
-  content: "\f16c";
-  content: "\f16c";
+  content: "\f002";
   font-family: "foundation-icons";
   font-style: normal;
   font-weight: normal;
