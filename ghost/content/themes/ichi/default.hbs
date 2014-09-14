@@ -81,7 +81,7 @@
             <hr>
             <p class="blog-description">{{@blog.description}}</p>
             <div class="blog-network">
-                <a href="{{@blog.url}}/rss" class="fa fa-rss-square"></a>
+                <a href="{{@blog.url}}/rss" target="_blank" id="rss-link" class="fa fa-rss-square"></a>
                 <a href="https://www.facebook.com/profile.php?id=100005915920438" target="_blank" class="fa fa-facebook-square"></a>
                 <a href="https://plus.google.com/u/0/100879315317761275357/posts" target="_blank" class="fa fa-google-plus-square"></a>
                 <a href="https://twitter.com/superlin1990" target="_blank" class="fa fa-twitter-square"></a>
@@ -93,7 +93,22 @@
 </header>
 
 </div>
-
+<script>
+    var url = location.href;
+    var rss;
+    var par = new RegExp(/\/page\//i);
+    var rsspar = new RegExp(/(\/tag\/)|(\/author\/)|(\/page\/)/i);
+    if(rsspar.test(location.pathname) || /(\/)*/.test(location.pathname)){
+        if(par.test(url)){
+            rss = url.replace(/\/page\//i, "/rss/");
+        } else {
+            rss = url + "/rss";
+        }
+    } else {
+        rss = location.host + "/rss";
+    }
+    document.getElementById("rss-link").href = rss;
+</script>
 
 <div class="small-16 medium-16 large-12 columns main-column left">
     {{! Everything else gets inserted here }}
