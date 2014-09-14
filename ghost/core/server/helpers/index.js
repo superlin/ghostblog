@@ -534,6 +534,7 @@ coreHelpers.meta_title = function (options) {
         //console.log("地址："+this.relativeUrl);
         blog = config.theme();
         if (!this.relativeUrl || this.relativeUrl === '/' || this.relativeUrl === '' || this.relativeUrl.match(/\/page/)) {
+            console.log(0);
             title = blog.title;
         } else if (this.post) {
             console.log(1);
