@@ -1,0 +1,45 @@
+{{! This is the post loop - each post will be output using this markup }}
+{{#foreach posts}}
+<article class="{{post_class}}">
+    <div class="post-inner clearfix">
+        <div class="column-left">
+            <span class="post-meta">
+                <time datetime="{{date format='YYYY-MM-DD'}}">
+                    <span>{{date format="DD"}}</span>
+                    <span>{{date format="MM"}}月</span>
+                    <span>{{date format="YYYY"}}</span>
+                </time>
+            </span>
+        </div>
+
+        <div class="column-right">
+            <header class="post-header">
+                <h2 class="post-title"><a href="{{url}}">{{{title}}}</a></h2>
+            </header>
+
+            <span class="post-meta clearfix">
+                <span><i class="fa fa-pencil"></i><a href="/author/anton/">{{author}}</a></span>
+            </span>
+
+            <section class="post-image">
+                <p><img src="/content/images/2014/Jan/Untitled_2.jpg" alt="The Ghost Logo"></p>
+            </section>
+
+            <section class="post-excerpt">
+                <p>{{excerpt words="30"}}<a href="{{url}}">阅读全文</a></p>
+
+            </section>
+
+            <span class="post-meta clearfix">
+                <span>
+                    <i class="fa fa-tag"></i>
+                    {{#if tags}}{{tags}}{{else}}无标签{{/if}}
+                </span>
+            </span>
+        </div>
+    </div>
+</article>
+{{/foreach}}
+
+{{! Previous/next page links - displayed on every page }}
+{{pagination}}
