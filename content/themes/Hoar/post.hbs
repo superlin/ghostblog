@@ -86,6 +86,36 @@
                     </section>
                 </footer>
             </div>
+            <div class="column-right author">
+                <section class="clearfix">
+                    <div class="comments">
+                        <style>
+                            #ds-smilies-tooltip, #ds-smilies-tooltip:before,#ds-smilies-tooltip:after, #ds-smilies-tooltip *, #ds-smilies-tooltip *:before,#ds-smilies-tooltip *:after{
+                                box-sizing: content-box;
+                                -webkit-box-sizing: content-box;
+                                -moz-box-sizing: content-box;
+                            }
+                        </style>
+                        <h3 class="title-disqus"><span class="fa fa-comments"></span>讨论区</h3>
+                        <!-- 多说评论框 start -->
+                        <div class="ds-thread" data-thread-key="{{post.id}}" data-title="{{post.title}}" data-url="{{@blog.url}}/{{slug}}"></div>
+                        <!-- 多说评论框 end -->
+                        <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+                        <script type="text/javascript">
+                            var duoshuoQuery = {short_name:"lwlblog"};
+                            (function() {
+                                var ds = document.createElement('script');
+                                ds.type = 'text/javascript';ds.async = true;
+                                ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+                                ds.charset = 'UTF-8';
+                                (document.getElementsByTagName('head')[0] 
+                                 || document.getElementsByTagName('body')[0]).appendChild(ds);
+                            })();
+                        </script>
+                        <!-- 多说公共JS代码 end -->
+                    </div>
+                </section>
+            </div>
         </div>
     {{/post}}
     </article>
