@@ -18,6 +18,8 @@
     <link rel="stylesheet" type="text/css" href="{{asset "css/screen.css"}}" />
     <link rel="stylesheet" type="text/css" href="{{asset "css/normalize.css"}}" />
 
+    <link href="http://cdn.bootcss.com/highlight.js/8.2/styles/monokai.min.css" rel="stylesheet">
+
     {{! Ghost outputs important style and meta data with this tag }}
     {{ghost_head}}
 </head>
@@ -38,6 +40,8 @@
     {{! The main JavaScript file for Casper }}
     <script type="text/javascript" src="{{asset "js/jquery.js"}}"></script>
     <script type="text/javascript" src="{{asset "js/index.js"}}"></script>
+    <script src="http://cdn.bootcss.com/highlight.js/8.2/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
 
 </body>
 </html>
