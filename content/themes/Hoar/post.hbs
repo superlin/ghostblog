@@ -89,6 +89,16 @@
             <br>
             <div class="column-right author">
                 <section class="clearfix">
+                    <div class="img-wrapper"><img width="80" src="{{author.image}}" ></div>
+                    <h4><a href="/author/{{author.slug}}">{{author.name}}</a></h4>
+                    {{#if author.location}}<p><i class="fa fa-map-marker"></i> {{author.location}}</p>{{/if}}
+                    {{#if author.website}}<p><i class="fa fa-link"></i><a href="{{author.website}}">{{author.website}}</a></p>{{/if}}
+                    {{#if author.bio}}<p>{{author.bio}}</p>{{/if}}
+                </section>
+            </div>
+            <br>
+            <div class="column-right author">
+                <section class="clearfix">
                     <div class="comments">
                         <style>
                             #ds-smilies-tooltip, #ds-smilies-tooltip:before,#ds-smilies-tooltip:after, #ds-smilies-tooltip *, #ds-smilies-tooltip *:before,#ds-smilies-tooltip *:after{
