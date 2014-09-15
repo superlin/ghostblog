@@ -1,7 +1,7 @@
 <div class="pagination-wrapper">
 	<nav class="pagination" role="navigation">
-		{{#if prev}}<a class="newer-posts" href="{{page_url prev}}"><i class="fa fa-long-arrow-left"></i>Newer Posts</a>{{/if}}
-	    <span class="page-number">PAGE {{page}} OF {{pages}}</span>
-	    {{#if next}}<a class="older-posts" href="{{page_url next}}">Older Posts <i class="fa fa-long-arrow-right"></i></a>{{/if}}
+		{{#if prev}}<a class="newer-posts" href="{{page_url prev}}"><i class="fa fa-long-arrow-left"></i>上一页</a>{{/if}}
+	    <span class="page-number">第 {{page}} 页，共 {{pages}} 页</span>
+	    {{#if next}}<a class="older-posts" href="{{page_url next}}">下一页 <i class="fa fa-long-arrow-right"></i></a>{{/if}}
 	</nav>
 </div>
