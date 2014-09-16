@@ -440,9 +440,9 @@ a.toggle-mobile-menu {
   bottom: -5px; }
   #blog-logo.default {
     display: inline-block;
-    width: 65px;
-    height: 51px;
-    background: url("../img/hoar_logo.svg") 0 0 no-repeat; }
+    width: 60px;
+    height: 60px;
+    background-size: 100% 100%; }
   #blog-logo img {
     display: block;
     max-height: 100px;
