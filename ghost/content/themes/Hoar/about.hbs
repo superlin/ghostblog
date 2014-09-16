@@ -1,11 +1,52 @@
 {{!< default}}
 
-{{> "sheader"}}
+{{> "mheader"}}
 
-{{! The main content area on the homepage }}
-<main id="content" class="content" role="main">
+<main class="content" role="main">
 
-    {{! The tag below includes the post loop - partials/loop.hbs }}
-    about
+    <article class="post page">
+    {{! Everything inside the #post tags pulls data from the post }}
+        <div class="post-inner">
+            <div class="column-left"></div>
+            <div class="column-right">
+                <header class="post-header">
+                    <h1 class="post-title">关于我们</h1>
+                </header>
+
+                <span class="post-meta clearfix"></span>
+
+                <section class="post-content">
+                    <p>LodossTeam is a Russian IT outsourcing company made up of a wide variety of smart developers, designers, analysts and managers. Be it enterprise or private we attend each client with a personal touch to meet their requirements and needs. We use the latest technologies and follow the latest trends. </p>
+					<p>At the moment our team consist 25 developers with extensive experience in web and mobile development who will be able to recommend the best solutions for the futher project direction. We successfully created a lot of projects for large corporations and received euphonious feedbacks from them. We have experience in creating really large (databases more than 20.000.000 queries) and popular (Projects more that million users) projects.</p>
+                </section>
+
+                <footer class="post-footer">
+
+                    <section class="share bdsharebuttonbox">
+                        <h4>立即分享:</h4>
+                        <a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+                        <a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"></a>
+                        <a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+                        <a href="#" class="bds_renren" data-cmd="renren" title="分享到人人网"></a>
+                        <a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a>
+                        <script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"关于一个有趣的博客-{{@blog.title}}的介绍，快去看看吧！","bdUrl":"{{@blog.url}}/about","bdDesc":"{{@blog.description}}","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"1","bdSize":"16"},"share":{},"selectShare":{"bdContainerClass":null,"bdSelectMiniList":["tsina","tqq","weixin","renren","qzone"]}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+                    </section>
+                </footer>
+            </div>
+            <br>
+            <div class="column-right author">
+                <section class="clearfix">
+                    <div class="img-wrapper"><img width="80" src="{{#if author.image}}{{author.image}}{{else}}{{asset 'img/user-image.png'}}{{/if}}" ></div>
+                    <h4><a href="/author/{{author.slug}}">{{author.name}}</a></h4>
+                    {{#if author.location}}<p class="author-meta"><i class="fa fa-map-marker"></i> {{author.location}}</p>{{/if}}
+                    {{#if author.bio}}<p>{{author.bio}}</p>{{/if}}
+                </section>
+            </div>
+        </div>
+
+    </article>
+    <div class="to_top">
+        <a href="#"><i class="fa fa-arrow-circle-up"></i></a>
+    </div>
 
 </main>
