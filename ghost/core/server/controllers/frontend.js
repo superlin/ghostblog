@@ -124,6 +124,8 @@ frontendControllers = {
         res.render('contact');
     },
     'tags': function(req, res, next){
+        var all = api.tags.all();
+        console.log(all);
         res.render('tags', api.tags.all());
     },
     'homepage': function (req, res, next) {
