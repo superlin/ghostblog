@@ -124,9 +124,10 @@ frontendControllers = {
         res.render('contact');
     },
     'tags': function(req, res, next){
-        var all = api.tags.all();
-        console.log(all);
-        res.render('tags', api.tags.all());
+        api.tags.all().then(function(res){
+            console.log(res);
+            res.render('tags', res);
+        });
     },
     'homepage': function (req, res, next) {
         // Parse the page number
