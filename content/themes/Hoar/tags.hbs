@@ -10,13 +10,13 @@
             <div class="tags-holder clearfix">
             {{#foreach tags}}
                 <div class="tag-wrapper">
-                    <div class="tag-outer clearfix">
+                    <div class="tag-outer clearfix" title="{{name}}">
                         <div class="tag-inner clearfix">
                             <div class="tag-logo">
-                                <img src="{{asset "img/hoar_logo.svg"}}" alt="">
+                                <img src="{{#if image}}{{image}}{{else}}{{asset "img/tag-logo.png"}}{{/if}}" alt="">
                             </div>
                             <p>2014-09-15 </p>
-                            <h4><a href="/tag/{{slug}}" data-name="{{name}}">{{name}}</a></h4>
+                            <h4><a href="/tag/{{slug}}">{{name}}</a></h4>
                         </div>
                     </div>
                 </div>

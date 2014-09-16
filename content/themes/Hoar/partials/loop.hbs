@@ -18,16 +18,17 @@
             </header>
 
             <span class="post-meta clearfix">
-                <span><i class="fa fa-pencil"></i><a href="/author/anton/">{{author}}</a></span>
+                <span><i class="fa fa-pencil"></i><a href="/author/{{author}}" title="作者">{{author}}</a></span>
             </span>
 
-            <!-- <section class="post-image">
-                <p><img src="" alt="The Ghost Logo"></p>
-            </section> -->
+            {{#if image}}
+                <section class="post-image">
+                    <p><img src="{{image}}" alt="文章封面"></p>
+                </section>
+            {{/if}}
 
             <section class="post-excerpt">
                 <p>{{excerpt words="100"}}[...]&nbsp;&nbsp;<a href="{{url}}">阅读全文</a></p>
-
             </section>
 
             <span class="post-meta clearfix">
