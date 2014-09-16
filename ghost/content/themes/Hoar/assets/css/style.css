@@ -11,3 +11,11 @@ pre{
 	color: rgba(255,255,255,0.95);
 	font-size: 30px;
 }
+.author-info i{
+	color: #1D9D74;
+	font-size: 1.6rem;
+}
+.author-info a{
+	color: #FFF;
+	text-decoration: none;
+}
