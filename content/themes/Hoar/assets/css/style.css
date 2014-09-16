@@ -21,8 +21,6 @@ pre{
 }
 .tag-wrapper{
 	margin-bottom: 5px;
-}
-.tag-wrapper{
 	float: left;
 	width: 33.3333%;
 }
@@ -46,9 +44,14 @@ pre{
 	font-size: 1.3rem;
 	line-height: 1;
 }
+.tag-inner{
+	white-space: nowrap;
+	overflow: hidden;
+	-ms-text-overflow: ellipsis;
+	text-overflow: ellipsis;
+}
 .tag-logo{
 	float: left;
-	border: 3px solid #689fd4;
 	margin: 0 10px 0 0;
 }
 .tag-logo img{
@@ -67,5 +70,6 @@ pre{
 @media only screen and (max-width: 768px){
 	.tag-wrapper{
 		width: 100%;
+		margin-left: 5px;
 	}
 }

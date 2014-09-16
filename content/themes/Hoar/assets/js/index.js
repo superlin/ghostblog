@@ -139,18 +139,3 @@ function cutname(con, len){
 	}
 	return tmp;
 }
-
-//添加函数
-$(window).resize(function(){
-	$(".tag-outer a").each(function() {
-		var cliwidth = document.body.clientWidth;
-		var con = $(this).data('name');
-		if(cliwidth > 900){
-			con = cutname(con, 10);
-		} else if(cliwidth > 768){
-			con = cutname(con, 15);
-		}
-		$(this).html(con);
-	});
-
-});
