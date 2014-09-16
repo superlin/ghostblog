@@ -417,6 +417,11 @@ coreHelpers.body_class = function (options) {
         classes.push('post-template');
     }
 
+    //add liuwanlin
+    if (this.relativeUrl == "/about/" || this.relativeUrl == "/contact/") {
+        classes.push('page');
+    }
+
     if (this.tag !== undefined) {
         classes.push('tag-template');
         classes.push('tag-' + this.tag.slug);
@@ -541,9 +546,9 @@ coreHelpers.meta_title = function (options) {
         } else if (this.author) {
             title = this.author.name + ' - ' + blog.title;
         } else if(this.relativeUrl == "/about/"){
-            title = "关于我";
+            title = "关于我们";
         } else if(this.relativeUrl == "/contact/"){
-            title = "联系我";
+            title = "联系我们";
         }
     }
 
