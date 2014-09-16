@@ -20,10 +20,20 @@ pre{
 	margin-left: 140px;
 }
 .tag-outer{
+	margin-bottom: 5px;
+}
+.tag-outer + .tag-outer{
+	margin-right: 5px;
+}
+.tag-outer{
 	float: left;
 	width: 33.3333%;
 	background-color: #FFF;
 	box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
+	padding: 6px;
+}
+.tag-outer h4{
+	margin-bottom: 8px 0;
 }
 .tag-outer h4 a{
 	margin: 8px;
