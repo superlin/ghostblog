@@ -26,6 +26,11 @@ tags = {
         }, function () {
             return when.reject(new errors.NoPermissionError('You do not have permission to browse tags.'));
         });
+    },
+    all: function all(){
+        return dataProvider.Tag.findAll({}).then(function (result) {
+            return { tags: result.toJSON() };
+        });
     }
 };
 
