@@ -546,9 +546,11 @@ coreHelpers.meta_title = function (options) {
         } else if (this.author) {
             title = this.author.name + ' - ' + blog.title;
         } else if(this.relativeUrl == "/about/"){
-            title = "关于我们";
+            title = "关于我们 - " + blog.title;
         } else if(this.relativeUrl == "/contact/"){
-            title = "联系我们";
+            title = "联系我们 - " + blog.title;
+        } else if(this.relativeUrl == "/tags/"){
+            title = "所有标签 - " + blog.title;
         }
     }
 
