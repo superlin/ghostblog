@@ -13,10 +13,10 @@
                     <a id="blog-logo" class="default" href="{{author.url}}" {{#if author.image}}style="background-image: url({{author.image}})"{{/if}}></a>
 
                     <h1 class="blog-title">{{author.name}}</h1>
-                    <h2 class="blog-description">
-                        {{#if author.location}}<i class="fa fa-map-marker"></i>:{{author.location}}</span>&nbsp;{{/if}}
-                        {{#if author.website}}<i class="fa fa-link"></i>:<a href="{{author.website}}">我的网站</a></span>&nbsp;{{/if}}
-                        <i class="fa fa-bar-chart-o"></i>:{{plural pagination.total empty='没有博文' singular='% 篇博文' plural='% 篇博文'}}
+                    <h2 class="blog-description author-info">
+                        {{#if author.location}}<i class="fa fa-map-marker"></i>&nbsp;{{author.location}}</span>&nbsp;{{/if}}
+                        {{#if author.website}}<i class="fa fa-link"></i>&nbsp;<a href="{{author.website}}">我的网站</a></span>&nbsp;{{/if}}
+                        <i class="fa fa-bar-chart-o"></i>&nbsp;{{plural pagination.total empty='没有博文' singular='% 篇博文' plural='% 篇博文'}}
                     </h2>
                 {{else}}
                     <a id="blog-logo" class="default" href="{{@blog.url}}" {{#if @blog.logo}}style="background-image: url({{@blog.logo}})"{{/if}}></a>
