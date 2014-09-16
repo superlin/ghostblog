@@ -125,7 +125,6 @@ frontendControllers = {
     },
     'tags': function(req, res, next){
         return api.tags.all().then(function(result){
-            console.log(result);
             res.render('tags', result);
         }).otherwise(handleError(next));;
     },
