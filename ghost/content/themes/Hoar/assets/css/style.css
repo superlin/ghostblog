@@ -20,7 +20,7 @@ pre{
 	margin-left: 140px;
 }
 .tag-wrapper{
-	margin-bottom: 5px;
+	margin-bottom: 8px;
 	float: left;
 	width: 33.3333%;
 }
@@ -29,6 +29,7 @@ pre{
 	box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
 	padding: 10px;
 	margin-right: 5px;
+	border-top: 3px solid #1EA076;
 }
 .tag-outer h4{
 	margin: 0;
@@ -70,6 +71,7 @@ pre{
 @media only screen and (max-width: 768px){
 	.tag-wrapper{
 		width: 100%;
-		margin-left: 5px;
+		margin-left: 10px;
+		margin-right: 10px;
 	}
 }
