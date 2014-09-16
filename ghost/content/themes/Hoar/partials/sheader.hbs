@@ -3,12 +3,12 @@
     <div class="site-head-inner">
         <div class="vertical">
             <div id="site-head-content" class="inner">
-            {{#if mtag}}
+            {{#if tag}}
                 <a id="blog-logo" class="default" href="/tag/{{tag.slug}}" {{#if tag.logo}}style="background-image: url()"{{/if}}></a>
 
                 <h1 class="blog-title">{{tag.name}}</h1>
                 <h2 class="blog-description">共包含{{pagination.total}}篇博文</h2>
-            {{else if mauthor}}
+            {{else if author}}
                 <a id="blog-logo" class="default" href="{{author.url}}" {{#if author.image}}style="background-image: url({{author.image}})"{{/if}}></a>
 
                 <h1 class="blog-title">{{author.name}}</h1>
