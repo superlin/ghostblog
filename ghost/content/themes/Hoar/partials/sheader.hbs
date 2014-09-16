@@ -4,7 +4,7 @@
         <div class="vertical">
             <div id="site-head-content" class="inner">
 
-                <a id="blog-logo" class="default" href="{{@blog.url}}"></a>
+                <a id="blog-logo" class="default" href="{{@blog.url}}" {{#if @blog.logo}}style="background-image: url({{@blog.logo}})"{{/if}}></a>
 
                 <h1 class="blog-title">{{@blog.title}}</h1>
                 <h2 class="blog-description">{{@blog.description}}</h2>
