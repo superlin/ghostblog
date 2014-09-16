@@ -55,9 +55,6 @@ pre{
 	width: 50px;
 	height: 50px;
 }
-.tag-profile{
-	float: left;
-}
 @media only screen and (max-width: 900px){
 	.tag-wrapper{
 		width: 50%;
