@@ -28,7 +28,7 @@ tags = {
         });
     },
     all: function all(){
-        return dataProvider.Tag.findAll({}).then(function (result) {
+        return dataProvider.Tag.findAll().then(function (result) {
             return { tags: result.toJSON() };
         });
     }
