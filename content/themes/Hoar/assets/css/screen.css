@@ -443,7 +443,7 @@ a.toggle-mobile-menu {
     width: 60px;
     height: 60px;
     background-size: 100% 100%;
-    background: url("../img/hoar_logo.svg") 0 0 no-repeat;
+    background-image: url("../img/hoar_logo.svg");
   }
   #blog-logo img {
     display: block;
