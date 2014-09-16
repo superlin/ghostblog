@@ -8,27 +8,31 @@
 
         <div class="post-inner">
             <div class="tags-holder clearfix">
+                <div class="tag-wrapper">
                 <div class="tag-outer">
                     <div class="tag-logo">
                         <img src="{{asset "img/hoar_logo.svg"}}" alt="">
                     </div>
                     <p> <i class="fa fa-clock-o"></i>2014-09-15 </p>
                     <h4><a href="/tag/liu">Hadoop</a></h4>
-                </div>
+                </div></div>
+                <div class="tag-wrapper">
                 <div class="tag-outer">
                     <div class="tag-logo">
                         <img src="{{asset "img/hoar_logo.svg"}}" alt="">
                     </div>
                     <p> <i class="fa fa-clock-o"></i>2014-09-15 </p>
                     <h4><a href="/tag/liu">Hadoop</a></h4>
-                </div>
+                </div></div>
+                <div class="tag-wrapper">
                 <div class="tag-outer">
                     <div class="tag-logo">
                         <img src="{{asset "img/hoar_logo.svg"}}" alt="">
                     </div>
                     <p> <i class="fa fa-clock-o"></i>2014-09-15 </p>
                     <h4><a href="/tag/liu">Hadoop</a></h4>
-                </div>
+                </div></div>
+                <div class="tag-wrapper">
                 <div class="tag-outer">
                     <div class="tag-logo">
                         <img src="{{asset "img/hoar_logo.svg"}}" alt="">
@@ -37,13 +41,14 @@
                     <h4><a href="/tag/liu">Hadoop</a></h4>
                 </div>
             {{#foreach tags}}
+                <div class="tag-wrapper">
                 <div class="tag-outer">
                     <div class="tag-logo">
                         <img src="{{asset "img/hoar_logo.svg"}}" alt="">
                     </div>
                     <p> <i class="fa fa-clock-o"></i>2014-09-15 </p>
                     <h4><a href="/tag/{{slug}}">{{name}}</a></h4>
-                </div>
+                </div></div>
             {{/foreach}}
             </div>
 

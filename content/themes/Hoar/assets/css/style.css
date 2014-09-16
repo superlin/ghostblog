@@ -19,32 +19,32 @@ pre{
 	position: relative;
 	margin-left: 140px;
 }
-.tag-outer{
+.tag-wrapper{
 	margin-bottom: 5px;
 }
-.tag-outer + .tag-outer{
-	margin-right: 5px;
-}
-.tag-outer{
+.tag-wrapper{
 	float: left;
 	width: 33.3333%;
+}
+.tag-outer{
 	background-color: #FFF;
 	box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
-	padding: 6px;
+	padding: 10px;
+	margin-right: 5px;
 }
 .tag-outer h4{
-	margin-bottom: 8px 0;
+	margin: 0;
 }
 .tag-outer h4 a{
-	margin: 8px;
 	font-size: 1.7rem;
 	font-weight: 300;
 	color: #4f94d6;
 	text-decoration: none;
 }
 .tag-outer p{
-	margin: 8px 0;
+	margin: 0;
 	font-size: 1.3rem;
+	line-height: 1;
 }
 .tag-logo{
 	float: left;
@@ -53,15 +53,19 @@ pre{
 }
 .tag-logo img{
 	width: 60px;
+	height: 60px;
 }
 @media only screen and (max-width: 900px){
-	.tag-outer{
+	.tag-wrapper{
 		width: 50%;
+	}
+	.tags-holder{
+		margin-left: 0;
 	}
 }
 
 @media only screen and (max-width: 768px){
-	.tag-outer{
+	.tag-wrapper{
 		width: 100%;
 	}
 }
