@@ -15,3 +15,38 @@ pre{
 	color: #FFF;
 	text-decoration: none;
 }
+.tags-holder{
+	position: relative;
+	margin-left: 140px;
+}
+.tag-outer{
+	width: 33.3333%;
+}
+.tag-outer h4{
+	margin: 8px;
+	font-size: 1.5rem;
+	font-weight: 300;
+	color: #4f94d6;
+}
+.tag-outer p{
+	margin: 8px 0;
+}
+.tag-logo{
+	float: left;
+	border: 3px solid #689fd4;
+	margin: 0 15px 0 0;
+}
+.tag-logo img{
+	width: 60px;
+}
+@media only screen and (max-width: 900px){
+	.tag-outer{
+		width: 50%;
+	}
+}
+
+@media only screen and (max-width: 768px){
+	.tag-outer{
+		width: 100%;
+	}
+}

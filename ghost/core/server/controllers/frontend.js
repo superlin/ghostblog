@@ -123,6 +123,9 @@ frontendControllers = {
     'contact': function (req, res, next) {
         res.render('contact');
     },
+    'tags': function(req, res, next){
+        res.render('tags', api.tags.browse());
+    },
     'homepage': function (req, res, next) {
         // Parse the page number
         var pageParam = req.params.page !== undefined ? parseInt(req.params.page, 10) : 1,
