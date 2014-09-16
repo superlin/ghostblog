@@ -42,14 +42,15 @@
                 </div></div>
             {{#foreach tags}}
                 <div class="tag-wrapper">
-                    <div class="tag-outer">
+                    <div class="tag-outer clearfix">
                         <div class="tag-logo">
                             <img src="{{asset "img/hoar_logo.svg"}}" alt="">
                         </div>
-                        <p>2014-09-15 </p>
-                        <h4><a href="/tag/{{slug}}">{{name}}</a></h4>
+                        <div class="tag-profile">
+                            <p>2014-09-15 </p>
+                            <h4><a href="/tag/{{slug}}">{{name}}</a></h4>
+                        </div>
                     </div>
-                    <div class="clearfix"></div>
                 </div>
             {{/foreach}}
             </div>
