@@ -1,0 +1,64 @@
+{{!< default}}
+
+{{> "sheader"}}
+
+<main class="content" role="main">
+
+    <article class="post page">
+
+        <div class="post-inner">
+            <div class="tags-holder clearfix">
+                <div class="tag-outer">
+                    <div class="tag-logo">
+                        <img src="{{asset "img/hoar_logo.svg"}}" alt="">
+                    </div>
+                    <h4><a href="/tag/liu">Hadoop</a></h4>
+                    <p>
+                        <i class="fa fa-clock-o"></i>2014-09-15 <i class="fa fa-bar-chart-o"></i>2篇博文
+                    </p>
+                </div>
+                <div class="tag-outer">
+                    <div class="tag-logo">
+                        <img src="{{asset "img/hoar_logo.svg"}}" alt="">
+                    </div>
+                    <h4><a href="/tag/liu">Hadoop</a></h4>
+                    <p>
+                        <i class="fa fa-clock-o"></i>2014-09-15 <i class="fa fa-bar-chart-o"></i>2篇博文
+                    </p>
+                </div>
+                <div class="tag-outer">
+                    <div class="tag-logo">
+                        <img src="{{asset "img/hoar_logo.svg"}}" alt="">
+                    </div>
+                    <h4><a href="/tag/liu">Hadoop</a></h4>
+                    <p>
+                        <i class="fa fa-clock-o"></i>2014-09-15 <i class="fa fa-bar-chart-o"></i>2篇博文
+                    </p>
+                </div>
+                <div class="tag-outer">
+                    <div class="tag-logo">
+                        <img src="{{asset "img/hoar_logo.svg"}}" alt="">
+                    </div>
+                    <h4><a href="/tag/liu">Hadoop</a></h4>
+                    <p>
+                        <i class="fa fa-clock-o"></i>2014-09-15 <i class="fa fa-bar-chart-o"></i>2篇博文
+                    </p>
+                </div>
+            {{#foreach tags}}
+                <div class="tag-outer">
+                    <div class="tag-logo">
+                        <img src="{{asset "img/hoar_logo.svg"}}" alt="">
+                    </div>
+                    <h4><a href="/tag/{{slug}}">{{name}}</a></h4>
+                    <p>
+                        <i class="fa fa-clock-o"></i>2014-09-15 <i class="fa fa-bar-chart-o"></i>2篇博文
+                    </p>
+                </div>
+            {{/foreach}}
+            </div>
+
+        </div>
+
+    </article>
+
+</main>

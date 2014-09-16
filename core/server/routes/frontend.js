@@ -39,6 +39,8 @@ frontendRoutes = function () {
     router.get('/about', frontend.about);
     router.get('/contact', frontend.contact);
 
+    router.get('/tags', frontend.tags);
+
     return router;
 };
 
