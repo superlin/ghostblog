@@ -28,7 +28,10 @@
             {{/if}}
 
             <section class="post-excerpt">
-                <p>{{excerpt words="100"}}[...]&nbsp;&nbsp;<a href="{{url}}">阅读全文</a></p>
+                <div class="post-content-holder">{{content characters="200"}}&nbsp;[...]&nbsp;&nbsp;</div>
+                <div class="read-more">
+                    <a href="{{url}}">阅读全文</a>
+                </div>
             </section>
 
             <span class="post-meta clearfix">
