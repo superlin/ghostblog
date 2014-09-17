@@ -98,6 +98,8 @@ pre{
 @media only screen and (max-width: 768px){
 	.tag-wrapper{
 		width: 100%;
+	}
+	.tag-outer{
 		margin-left: 10px;
 		margin-right: 10px;
 	}
