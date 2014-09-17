@@ -16,7 +16,7 @@ pre{
 	text-decoration: none;
 }
 .read-more{
-	text-align: right;
+	text-align: center;
 }
 .read-more a{
 	color: #467fb2;
@@ -24,11 +24,8 @@ pre{
 	font-size: 0.73em;
 	line-height: 1.6em;
 }
-.post-content-holder{
-	margin: 1.6rem 0 0 0;
-	font-size: 0.73em;
-	line-height: 1.6em;
-	font-family: "Hiragino Sans GB", "Microsoft YaHei", "Fira Sans";
+.post-excerpt img{
+	max-width: 100%;
 }
 /*标签相关*/
 .tags-holder{
