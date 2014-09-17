@@ -31,7 +31,7 @@ tags = {
         return dataProvider.Tag.findAll().then(function (result) {
             result = result.toJSON().sort(function(a,b){
                 return b.created_at - a.created_at;
-            }):
+            });
             return { tags: result };
         });
     }
