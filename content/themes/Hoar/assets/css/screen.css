@@ -1164,8 +1164,6 @@ body.page .column-right:after {
    14. Media Queries - Smaller than 500px
    ========================================================================== */
 @media only screen and (max-width: 500px) {
-  #blog-logo.default, #blog-logo img {
-    max-height: 80px; }
   #blog-logo.default {
     background-size: contain; }
 
