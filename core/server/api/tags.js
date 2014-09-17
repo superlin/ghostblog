@@ -29,9 +29,9 @@ tags = {
     },
     all: function all(){
         return dataProvider.Tag.findAll().then(function (result) {
-            result = result.sort(function(a, b){
+            /*result = result.sort(function(a, b){
                 return b.created_at - a.created_at;
-            });
+            });*/
             return { tags: result.toJSON() };
         });
     }
