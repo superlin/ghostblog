@@ -51,7 +51,9 @@ coreHelpers.date = function (context, options) {
         // otherwise, this will print the current date
         if (this.published_at) {
             context = this.published_at;
-        }
+        } else if(this.created_at){ //标签
+			context = this.created_at;
+		}
     }
 
     // ensure that context is undefined, not null, as that can cause errors
