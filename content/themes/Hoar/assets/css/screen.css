@@ -510,6 +510,7 @@ a.toggle-mobile-menu {
           line-height: 30px;
           letter-spacing: 0; }
   .post .post-inner .column-right {
+    text-align: left;
     position: relative;
     margin-left: 140px;
     padding: 40px 60px 20px 80px;
