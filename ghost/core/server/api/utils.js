@@ -1,6 +1,6 @@
 // # API Utils
 // Shared helpers for working with the API
-var Promise = require('bluebird'),
+var when    = require('when'),
     _       = require('lodash'),
     errors  = require('../errors'),
     utils;
@@ -27,7 +27,7 @@ utils = {
                 delete object.posts[0].author;
             }
         }
-        return Promise.resolve(object);
+        return when(object);
     }
 };
 

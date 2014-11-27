@@ -1,48 +1,52 @@
 var moment  = require('moment'),
-    path    = require('path');
+    path    = require('path'),
+    when    = require('when'),
+    baseStore;
 
-function StorageBase() {
-}
+// TODO: would probably be better to put these on the prototype and have proper constructors etc
+baseStore = {
+    'getTargetDir': function (baseDir) {
+        var m = moment(new Date().getTime()),
+            month = m.format('MMM'),
+            year =  m.format('YYYY');
 
-StorageBase.prototype.getTargetDir = function (baseDir) {
-    var m = moment(new Date().getTime()),
-        month = m.format('MM'),
-        year =  m.format('YYYY');
-
-    if (baseDir) {
-        return path.join(baseDir, year, month);
-    }
-
-    return path.join(year, month);
-};
-
-StorageBase.prototype.generateUnique = function (store, dir, name, ext, i) {
-    var self = this,
-        filename,
-        append = '';
-
-    if (i) {
-        append = '-' + i;
-    }
-
-    filename = path.join(dir, name + append + ext);
-
-    return store.exists(filename).then(function (exists) {
-        if (exists) {
-            i = i + 1;
-            return self.generateUnique(store, dir, name, ext, i);
-        } else {
-            return filename;
+        if (baseDir) {
+            return path.join(baseDir, year, month);
         }
-    });
+
+        return path.join(year, month);
+    },
+    'generateUnique': function (store, dir, name, ext, i, done) {
+        var self = this,
+            filename,
+            append = '';
+
+        if (i) {
+            append = '-' + i;
+        }
+
+        filename = path.join(dir, name + append + ext);
+
+        store.exists(filename).then(function (exists) {
+            if (exists) {
+                setImmediate(function () {
+                    i = i + 1;
+                    self.generateUnique(store, dir, name, ext, i, done);
+                });
+            } else {
+                done.resolve(filename);
+            }
+        });
+    },
+    'getUniqueFileName': function (store, image, targetDir) {
+        var done = when.defer(),
+            ext = path.extname(image.name),
+            name = path.basename(image.name, ext).replace(/[\W]/gi, '-');
+
+        this.generateUnique(store, targetDir, name, ext, 0, done);
+
+        return done.promise;
+    }
 };
 
-StorageBase.prototype.getUniqueFileName = function (store, image, targetDir) {
-    var ext = path.extname(image.name),
-        name = path.basename(image.name, ext).replace(/[\W]/gi, '-'),
-        self = this;
-
-    return self.generateUnique(store, targetDir, name, ext, 0);
-};
-
-module.exports = StorageBase;
+module.exports = baseStore;

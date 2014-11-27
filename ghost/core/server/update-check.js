@@ -23,7 +23,8 @@ var crypto   = require('crypto'),
     https    = require('https'),
     moment   = require('moment'),
     semver   = require('semver'),
-    Promise  = require('bluebird'),
+    when     = require('when'),
+    nodefn   = require('when/node'),
     _        = require('lodash'),
     url      = require('url'),
 
@@ -38,11 +39,6 @@ var crypto   = require('crypto'),
     currentVersion = packageInfo.version;
 
 function updateCheckError(error) {
-    api.settings.edit(
-        {settings: [{key: 'nextUpdateCheck', value: Math.round(Date.now() / 1000 + 24 * 3600)}]},
-        internal
-    ).catch(errors.rejectError);
-
     errors.logError(
         error,
         'Checking for updates failed, your blog will continue to function.',
@@ -55,8 +51,8 @@ function updateCheckData() {
         ops = [],
         mailConfig = config.mail;
 
-    ops.push(api.settings.read(_.extend(internal, {key: 'dbHash'})).catch(errors.rejectError));
-    ops.push(api.settings.read(_.extend(internal, {key: 'activeTheme'})).catch(errors.rejectError));
+    ops.push(api.settings.read(_.extend(internal, {key: 'dbHash'})).otherwise(errors.rejectError));
+    ops.push(api.settings.read(_.extend(internal, {key: 'activeTheme'})).otherwise(errors.rejectError));
     ops.push(api.settings.read(_.extend(internal, {key: 'activeApps'}))
         .then(function (response) {
             var apps = response.settings[0];
@@ -67,10 +63,10 @@ function updateCheckData() {
             }
 
             return _.reduce(apps, function (memo, item) { return memo === '' ? memo + item : memo + ', ' + item; }, '');
-        }).catch(errors.rejectError));
-    ops.push(api.posts.browse().catch(errors.rejectError));
-    ops.push(api.users.browse(internal).catch(errors.rejectError));
-    ops.push(Promise.promisify(exec)('npm -v').catch(errors.rejectError));
+        }).otherwise(errors.rejectError));
+    ops.push(api.posts.browse().otherwise(errors.rejectError));
+    ops.push(api.users.browse(internal).otherwise(errors.rejectError));
+    ops.push(nodefn.call(exec, 'npm -v').otherwise(errors.rejectError));
 
     data.ghost_version   = currentVersion;
     data.node_version    = process.versions.node;
@@ -78,13 +74,13 @@ function updateCheckData() {
     data.database_type   = config.database.client;
     data.email_transport = mailConfig && (mailConfig.options && mailConfig.options.service ? mailConfig.options.service : mailConfig.transport);
 
-    return Promise.settle(ops).then(function (descriptors) {
-        var hash             = descriptors[0].value().settings[0],
-            theme            = descriptors[1].value().settings[0],
-            apps             = descriptors[2].value(),
-            posts            = descriptors[3].value(),
-            users            = descriptors[4].value(),
-            npm              = descriptors[5].value(),
+    return when.settle(ops).then(function (descriptors) {
+        var hash             = descriptors[0].value.settings[0],
+            theme            = descriptors[1].value.settings[0],
+            apps             = descriptors[2].value,
+            posts            = descriptors[3].value,
+            users            = descriptors[4].value,
+            npm              = descriptors[5].value,
             blogUrl          = url.parse(config.url),
             blogId           = blogUrl.hostname + blogUrl.pathname.replace(/\//, '') + hash.value;
 
@@ -97,12 +93,13 @@ function updateCheckData() {
         data.npm_version     = _.isArray(npm) && npm[0] ? npm[0].toString().replace(/\n/, '') : '';
 
         return data;
-    }).catch(updateCheckError);
+    }).otherwise(updateCheckError);
 }
 
 function updateCheckRequest() {
     return updateCheckData().then(function (reqData) {
-        var resData = '',
+        var deferred = when.defer(),
+            resData = '',
             headers,
             req;
 
@@ -112,39 +109,31 @@ function updateCheckRequest() {
             'Content-Length': reqData.length
         };
 
-        return new Promise(function (resolve, reject) {
-            req = https.request({
-                hostname: checkEndpoint,
-                method: 'POST',
-                headers: headers
-            }, function (res) {
-                res.on('error', function (error) { reject(error); });
-                res.on('data', function (chunk) { resData += chunk; });
-                res.on('end', function () {
-                    try {
-                        resData = JSON.parse(resData);
-                        resolve(resData);
-                    } catch (e) {
-                        reject('Unable to decode update response');
-                    }
-                });
+        req = https.request({
+            hostname: checkEndpoint,
+            method: 'POST',
+            headers: headers
+        }, function (res) {
+            res.on('error', function (error) { deferred.reject(error); });
+            res.on('data', function (chunk) { resData += chunk; });
+            res.on('end', function () {
+                try {
+                    resData = JSON.parse(resData);
+                    deferred.resolve(resData);
+                } catch (e) {
+                    deferred.reject('Unable to decode update response');
+                }
             });
-
-            req.on('socket', function (socket) {
-                // Wait a maximum of 10seconds
-                socket.setTimeout(10000);
-                socket.on('timeout', function () {
-                    req.abort();
-                });
-            });
-
-            req.on('error', function (error) {
-                reject(error);
-            });
-
-            req.write(reqData);
-            req.end();
         });
+
+        req.write(reqData);
+        req.end();
+
+        req.on('error', function (error) {
+            deferred.reject(error);
+        });
+
+        return deferred.promise;
     });
 }
 
@@ -160,46 +149,53 @@ function updateCheckResponse(response) {
         api.settings.edit(
             {settings: [{key: 'nextUpdateCheck', value: response.next_check}]},
             internal
-        ).catch(errors.rejectError),
+        )
+        .otherwise(errors.rejectError),
         api.settings.edit(
             {settings: [{key: 'displayUpdateNotification', value: response.version}]},
             internal
-        ).catch(errors.rejectError)
+        )
+        .otherwise(errors.rejectError)
     );
 
-    return Promise.settle(ops).then(function (descriptors) {
+    return when.settle(ops).then(function (descriptors) {
         descriptors.forEach(function (d) {
-            if (d.isRejected()) {
-                errors.rejectError(d.reason());
+            if (d.state === 'rejected') {
+                errors.rejectError(d.reason);
             }
         });
+        return when.resolve();
     });
 }
 
 function updateCheck() {
+    var deferred = when.defer();
+
     // The check will not happen if:
     // 1. updateCheck is defined as false in config.js
     // 2. we've already done a check this session
     // 3. we're not in production or development mode
-    // TODO: need to remove config.updateCheck in favor of config.privacy.updateCheck in future version (it is now deprecated)
-    if (config.updateCheck === false || config.isPrivacyDisabled('useUpdateCheck') || _.indexOf(allowedCheckEnvironments, process.env.NODE_ENV) === -1) {
+    if (config.updateCheck === false || _.indexOf(allowedCheckEnvironments, process.env.NODE_ENV) === -1) {
         // No update check
-        return Promise.resolve();
+        deferred.resolve();
     } else {
-        return api.settings.read(_.extend(internal, {key: 'nextUpdateCheck'})).then(function (result) {
+        api.settings.read(_.extend(internal, {key: 'nextUpdateCheck'})).then(function (result) {
             var nextUpdateCheck = result.settings[0];
 
             if (nextUpdateCheck && nextUpdateCheck.value && nextUpdateCheck.value > moment().unix()) {
                 // It's not time to check yet
-                return;
+                deferred.resolve();
             } else {
                 // We need to do a check
                 return updateCheckRequest()
                     .then(updateCheckResponse)
-                    .catch(updateCheckError);
+                    .otherwise(updateCheckError);
             }
-        }).catch(updateCheckError);
+        }).otherwise(updateCheckError)
+            .then(deferred.resolve);
     }
+
+    return deferred.promise;
 }
 
 function showUpdateNotification() {
@@ -214,10 +210,9 @@ function showUpdateNotification() {
         }
 
         if (display && display.value && currentVersion && semver.gt(display.value, currentVersion)) {
-            return display.value;
+            return when(display.value);
         }
-
-        return false;
+        return when(false);
     });
 }
 

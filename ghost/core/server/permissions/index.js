@@ -2,7 +2,7 @@
 // canThis(someUser).edit.post(somePost|somePostId)
 
 var _                   = require('lodash'),
-    Promise             = require('bluebird'),
+    when                = require('when'),
     Models              = require('../models'),
     effectivePerms      = require('./effective'),
     init,
@@ -49,28 +49,23 @@ CanThisResult = function () {
     return;
 };
 
-CanThisResult.prototype.buildObjectTypeHandlers = function (objTypes, actType, context, permissionLoad) {
-    var objectTypeModelMap = {
-        post:       Models.Post,
-        role:       Models.Role,
-        user:       Models.User,
-        permission: Models.Permission,
-        setting:    Models.Settings
-    };
+CanThisResult.prototype.buildObjectTypeHandlers = function (obj_types, act_type, context, permissionLoad) {
+    // @TODO: remove this lazy require
+    var objectTypeModelMap  = require('./objectTypeModelMap');
 
     // Iterate through the object types, i.e. ['post', 'tag', 'user']
-    return _.reduce(objTypes, function (objTypeHandlers, objType) {
+    return _.reduce(obj_types, function (obj_type_handlers, obj_type) {
         // Grab the TargetModel through the objectTypeModelMap
-        var TargetModel = objectTypeModelMap[objType];
+        var TargetModel = objectTypeModelMap[obj_type];
 
         // Create the 'handler' for the object type;
         // the '.post()' in canThis(user).edit.post()
-        objTypeHandlers[objType] = function (modelOrId) {
+        obj_type_handlers[obj_type] = function (modelOrId) {
             var modelId;
 
             // If it's an internal request, resolve immediately
             if (context.internal) {
-                return Promise.resolve();
+                return when.resolve();
             }
 
             if (_.isNumber(modelOrId) || _.isString(modelOrId)) {
@@ -91,7 +86,7 @@ CanThisResult.prototype.buildObjectTypeHandlers = function (objTypes, actType, c
                         var permObjId;
 
                         // Look for a matching action type and object type first
-                        if (perm.get('action_type') !== actType || perm.get('object_type') !== objType) {
+                        if (perm.get('action_type') !== act_type || perm.get('object_type') !== obj_type) {
                             return false;
                         }
 
@@ -111,11 +106,12 @@ CanThisResult.prototype.buildObjectTypeHandlers = function (objTypes, actType, c
                     };
                 // Check user permissions for matching action, object and id.
 
-                if (_.any(loadedPermissions.user.roles, {name: 'Owner'})) {
+                if (_.any(loadedPermissions.user.roles, { 'name': 'Owner' })) {
                     hasUserPermission = true;
                 } else if (!_.isEmpty(userPermissions)) {
                     hasUserPermission = _.any(userPermissions, checkPermission);
                 }
+
 
                 // Check app permissions if they were passed
                 hasAppPermission = true;
@@ -126,19 +122,18 @@ CanThisResult.prototype.buildObjectTypeHandlers = function (objTypes, actType, c
                 // Offer a chance for the TargetModel to override the results
                 if (TargetModel && _.isFunction(TargetModel.permissible)) {
                     return TargetModel.permissible(
-                        modelId, actType, context, loadedPermissions, hasUserPermission, hasAppPermission
+                        modelId, act_type, context, loadedPermissions, hasUserPermission, hasAppPermission
                     );
                 }
 
                 if (hasUserPermission && hasAppPermission) {
-                    return;
+                    return when.resolve();
                 }
-
-                return Promise.reject();
+                return when.reject();
             });
         };
 
-        return objTypeHandlers;
+        return obj_type_handlers;
     }, {});
 };
 
@@ -152,7 +147,7 @@ CanThisResult.prototype.beginCheck = function (context) {
     context = parseContext(context);
 
     if (!hasActionsMap()) {
-        throw new Error('No actions map found, please call permissions.init() before use.');
+        throw new Error("No actions map found, please call permissions.init() before use.");
     }
 
     // Kick off loading of effective user permissions if necessary
@@ -160,19 +155,20 @@ CanThisResult.prototype.beginCheck = function (context) {
         userPermissionLoad = effectivePerms.user(context.user);
     } else {
         // Resolve null if no context.user to prevent db call
-        userPermissionLoad = Promise.resolve(null);
+        userPermissionLoad = when.resolve(null);
     }
+
 
     // Kick off loading of effective app permissions if necessary
     if (context.app) {
         appPermissionLoad = effectivePerms.app(context.app);
     } else {
         // Resolve null if no context.app
-        appPermissionLoad = Promise.resolve(null);
+        appPermissionLoad = when.resolve(null);
     }
 
     // Wait for both user and app permissions to load
-    permissionsLoad = Promise.all([userPermissionLoad, appPermissionLoad]).then(function (result) {
+    permissionsLoad = when.all([userPermissionLoad, appPermissionLoad]).then(function (result) {
         return {
             user: result[0],
             app: result[1]
@@ -180,18 +176,18 @@ CanThisResult.prototype.beginCheck = function (context) {
     });
 
     // Iterate through the actions and their related object types
-    _.each(exported.actionsMap, function (objTypes, actType) {
+    _.each(exported.actionsMap, function (obj_types, act_type) {
         // Build up the object type handlers;
         // the '.post()' parts in canThis(user).edit.post()
-        var objTypeHandlers = self.buildObjectTypeHandlers(objTypes, actType, context, permissionsLoad);
+        var obj_type_handlers = self.buildObjectTypeHandlers(obj_types, act_type, context, permissionsLoad);
 
         // Define a property for the action on the result;
         // the '.edit' in canThis(user).edit.post()
-        Object.defineProperty(self, actType, {
+        Object.defineProperty(self, act_type, {
             writable: false,
             enumerable: false,
             configurable: false,
-            value: objTypeHandlers
+            value: obj_type_handlers
         });
     });
 
@@ -221,22 +217,22 @@ init = refresh = function () {
         }
         */
         _.each(perms.models, function (perm) {
-            var actionType = perm.get('action_type'),
-                objectType = perm.get('object_type');
+            var action_type = perm.get('action_type'),
+                object_type = perm.get('object_type');
 
-            exported.actionsMap[actionType] = exported.actionsMap[actionType] || [];
-            seenActions[actionType] = seenActions[actionType] || {};
+            exported.actionsMap[action_type] = exported.actionsMap[action_type] || [];
+            seenActions[action_type] = seenActions[action_type] || {};
 
             // Check if we've already seen this action -> object combo
-            if (seenActions[actionType][objectType]) {
+            if (seenActions[action_type][object_type]) {
                 return;
             }
 
-            exported.actionsMap[actionType].push(objectType);
-            seenActions[actionType][objectType] = true;
+            exported.actionsMap[action_type].push(object_type);
+            seenActions[action_type][object_type] = true;
         });
 
-        return exported.actionsMap;
+        return when(exported.actionsMap);
     });
 };
 

@@ -4,7 +4,8 @@ var dataExport       = require('../data/export'),
     dataImport       = require('../data/import'),
     dataProvider     = require('../models'),
     fs               = require('fs-extra'),
-    Promise          = require('bluebird'),
+    when             = require('when'),
+    nodefn           = require('when/node'),
     _                = require('lodash'),
     path             = require('path'),
     errors           = require('../../server/errors'),
@@ -13,6 +14,7 @@ var dataExport       = require('../data/export'),
     db;
 
 api.settings         = require('./settings');
+
 
 function isValidFile(ext) {
     if (ext === '.json') {
@@ -34,18 +36,18 @@ db = {
      * @param {{context}} options
      * @returns {Promise} Ghost Export JSON format
      */
-    exportContent: function (options) {
+    'exportContent': function (options) {
         options = options || {};
 
         // Export data, otherwise send error 500
         return canThis(options.context).exportContent.db().then(function () {
             return dataExport().then(function (exportedData) {
-                return {db: [exportedData]};
-            }).catch(function (error) {
-                return Promise.reject(new errors.InternalServerError(error.message || error));
+                return when.resolve({ db: [exportedData] });
+            }).otherwise(function (error) {
+                return when.reject(new errors.InternalServerError(error.message || error));
             });
         }, function () {
-            return Promise.reject(new errors.NoPermissionError('You do not have permission to export data (no rights).'));
+            return when.reject(new errors.NoPermissionError('You do not have permission to export data. (no rights)'));
         });
     },
     /**
@@ -56,7 +58,7 @@ db = {
      * @param {{context}} options
      * @returns {Promise} Success
      */
-    importContent: function (options) {
+    'importContent': function (options) {
         options = options || {};
         var databaseVersion,
             type,
@@ -65,29 +67,29 @@ db = {
 
         return canThis(options.context).importContent.db().then(function () {
             if (!options.importfile || !options.importfile.type || !options.importfile.path) {
-                return Promise.reject(new errors.NoPermissionError('Please select a file to import.'));
+                return when.reject(new errors.NoPermissionError('Please select a file to import.'));
             }
 
             type = options.importfile.type;
             ext = path.extname(options.importfile.name).toLowerCase();
             filepath = options.importfile.path;
 
-            return Promise.resolve(isValidFile(ext)).then(function (result) {
+            return when(isValidFile(ext)).then(function (result) {
                 if (!result) {
-                    return Promise.reject(new errors.UnsupportedMediaTypeError('Please select a .json file to import.'));
+                    return when.reject(new errors.UnsupportedMediaTypeError('Please select a .json file to import.'));
                 }
             }).then(function () {
                 return api.settings.read(
-                    {key: 'databaseVersion', context: {internal: true}}
+                    {key: 'databaseVersion', context: { internal: true }}
                 ).then(function (response) {
                     var setting = response.settings[0];
 
-                    return setting.value;
+                    return when(setting.value);
                 });
             }).then(function (version) {
                 databaseVersion = version;
                 // Read the file contents
-                return Promise.promisify(fs.readFile)(filepath);
+                return nodefn.call(fs.readFile, filepath);
             }).then(function (fileContents) {
                 var importData;
 
@@ -101,25 +103,28 @@ db = {
                     }
                 } catch (e) {
                     errors.logError(e, 'API DB import content', 'check that the import file is valid JSON.');
-                    return Promise.reject(new errors.BadRequestError('Failed to parse the import JSON file.'));
+                    return when.reject(new errors.BadRequest('Failed to parse the import JSON file'));
                 }
 
                 if (!importData.meta || !importData.meta.version) {
-                    return Promise.reject(
+                    return when.reject(
                         new errors.ValidationError('Import data does not specify version', 'meta.version')
                     );
                 }
 
                 // Import for the current version
                 return dataImport(databaseVersion, importData);
-            }).then(api.settings.updateSettingsCache)
-            .return({db: []})
-            .finally(function () {
+
+            }).then(function importSuccess() {
+                return api.settings.updateSettingsCache();
+            }).then(function () {
+                return when.resolve({ db: [] });
+            }).finally(function () {
                 // Unlink the file after import
-                return Promise.promisify(fs.unlink)(filepath);
+                return nodefn.call(fs.unlink, filepath);
             });
         }, function () {
-            return Promise.reject(new errors.NoPermissionError('You do not have permission to import data (no rights).'));
+            return when.reject(new errors.NoPermissionError('You do not have permission to import data. (no rights)'));
         });
     },
     /**
@@ -130,17 +135,18 @@ db = {
      * @param {{context}} options
      * @returns {Promise} Success
      */
-    deleteAllContent: function (options) {
+    'deleteAllContent': function (options) {
         options = options || {};
 
         return canThis(options.context).deleteAllContent.db().then(function () {
-            return Promise.resolve(dataProvider.deleteAllContent())
-                .return({db: []})
-                .catch(function (error) {
-                    return Promise.reject(new errors.InternalServerError(error.message || error));
+            return when(dataProvider.deleteAllContent())
+                .then(function () {
+                    return when.resolve({ db: [] });
+                }, function (error) {
+                    return when.reject(new errors.InternalServerError(error.message || error));
                 });
         }, function () {
-            return Promise.reject(new errors.NoPermissionError('You do not have permission to export data (no rights).'));
+            return when.reject(new errors.NoPermissionError('You do not have permission to export data. (no rights)'));
         });
     }
 };

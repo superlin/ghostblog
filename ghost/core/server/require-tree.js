@@ -1,11 +1,8 @@
 var _        = require('lodash'),
     fs       = require('fs'),
+    keys     = require('when/keys'),
     path     = require('path'),
-    Promise  = require('bluebird'),
-    readdirAsync  = Promise.promisify(fs.readdir),
-    lstatAsync    = Promise.promisify(fs.lstat),
-    readlinkAsync = Promise.promisify(fs.readlink),
-
+    when     = require('when'),
     parsePackageJson = function (path, messages) {
         // Default the messages if non were passed
         messages = messages || {
@@ -13,42 +10,42 @@ var _        = require('lodash'),
             warns: []
         };
 
-        var jsonContainer;
+        var packageDeferred = when.defer(),
+            packagePromise = packageDeferred.promise,
+            jsonContainer;
 
-        return new Promise(function (resolve) {
-            fs.readFile(path, function (error, data) {
-                if (error) {
+        fs.readFile(path, function (error, data) {
+            if (error) {
+                messages.errors.push({
+                    message: 'Could not read package.json file',
+                    context: path
+                });
+                packageDeferred.resolve(false);
+                return;
+            }
+            try {
+                jsonContainer = JSON.parse(data);
+                if (jsonContainer.hasOwnProperty('name') && jsonContainer.hasOwnProperty('version')) {
+                    packageDeferred.resolve(jsonContainer);
+                } else {
                     messages.errors.push({
-                        message: 'Could not read package.json file',
-                        context: path
-                    });
-                    resolve(false);
-                    return;
-                }
-                try {
-                    jsonContainer = JSON.parse(data);
-                    if (jsonContainer.hasOwnProperty('name') && jsonContainer.hasOwnProperty('version')) {
-                        resolve(jsonContainer);
-                    } else {
-                        messages.errors.push({
-                            message: '"name" or "version" is missing from theme package.json file.',
-                            context: path,
-                            help: 'This will be required in future. Please see http://docs.ghost.org/themes/'
-                        });
-                        resolve(false);
-                    }
-                } catch (e) {
-                    messages.errors.push({
-                        message: 'Theme package.json file is malformed',
+                        message: '"name" or "version" is missing from theme package.json file.',
                         context: path,
                         help: 'This will be required in future. Please see http://docs.ghost.org/themes/'
                     });
-                    resolve(false);
+                    packageDeferred.resolve(false);
                 }
-            });
+            } catch (e) {
+                messages.errors.push({
+                    message: 'Theme package.json file is malformed',
+                    context: path,
+                    help: 'This will be required in future. Please see http://docs.ghost.org/themes/'
+                });
+                packageDeferred.resolve(false);
+            }
         });
+        return when(packagePromise);
     },
-
     readDir = function (dir, options, depth, messages) {
         depth = depth || 0;
         messages = messages || {
@@ -57,46 +54,48 @@ var _        = require('lodash'),
         };
 
         options = _.extend({
-            index: true,
-            followSymlinks: true
+            index: true
         }, options);
 
         if (depth > 1) {
-            return Promise.resolve(null);
+            return null;
         }
 
-        return readdirAsync(dir).then(function (files) {
+        var subtree = {},
+            treeDeferred = when.defer(),
+            treePromise = treeDeferred.promise;
+
+        fs.readdir(dir, function (error, files) {
+            if (error) {
+                return treeDeferred.reject(error);
+            }
+
             files = files || [];
 
-            return Promise.reduce(files, function (results, file) {
-                var fpath = path.join(dir, file);
-
-                return lstatAsync(fpath).then(function (result) {
+            files.forEach(function (file) {
+                var fileDeferred = when.defer(),
+                    filePromise = fileDeferred.promise,
+                    fpath = path.join(dir, file);
+                subtree[file] = filePromise;
+                fs.lstat(fpath, function (error, result) {
+                    /*jslint unparam:true*/
                     if (result.isDirectory()) {
-                        return readDir(fpath, options, depth + 1, messages);
-                    } else if (options.followSymlinks && result.isSymbolicLink()) {
-                        return readlinkAsync(fpath).then(function (linkPath) {
-                            linkPath = path.resolve(dir, linkPath);
-
-                            return lstatAsync(linkPath).then(function (result) {
-                                if (result.isFile()) {
-                                    return linkPath;
-                                }
-
-                                return readDir(linkPath, options, depth + 1, messages);
-                            });
-                        });
+                        fileDeferred.resolve(readDir(fpath, options, depth + 1, messages));
                     } else if (depth === 1 && file === 'package.json') {
-                        return parsePackageJson(fpath, messages);
+                        fileDeferred.resolve(parsePackageJson(fpath, messages));
                     } else {
-                        return fpath;
+                        fileDeferred.resolve(fpath);
                     }
-                }).then(function (result) {
-                    results[file] = result;
-
-                    return results;
                 });
-            }, {});
+            });
+
+            return keys.all(subtree).then(function (theFiles) {
+                return treeDeferred.resolve(theFiles);
+            });
+        });
+
+        return when(treePromise).then(function (prom) {
+            return prom;
         });
     },
     readAll = function (dir, options, depth) {
@@ -106,7 +105,7 @@ var _        = require('lodash'),
             warns: []
         };
 
-        return readDir(dir, options, depth, messages).then(function (paths) {
+        return when(readDir(dir, options, depth, messages)).then(function (paths) {
             // for all contents of the dir, I'm interested in the ones that are directories and within /theme/
             if (typeof paths === 'object' && dir.indexOf('theme') !== -1) {
                 _.each(paths, function (path, index) {
@@ -119,12 +118,10 @@ var _        = require('lodash'),
                     }
                 });
             }
-
             paths._messages = messages;
-
             return paths;
-        }).catch(function () {
-            return {_messages: messages};
+        }).otherwise(function () {
+            return {'_messages': messages};
         });
     };
 

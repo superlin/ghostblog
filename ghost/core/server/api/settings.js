@@ -2,7 +2,7 @@
 // RESTful API for the Setting resource
 var _            = require('lodash'),
     dataProvider = require('../models'),
-    Promise      = require('bluebird'),
+    when         = require('when'),
     config       = require('../config'),
     canThis      = require('../permissions').canThis,
     errors       = require('../errors'),
@@ -11,7 +11,6 @@ var _            = require('lodash'),
     docName      = 'settings',
     settings,
 
-    updateConfigTheme,
     updateSettingsCache,
     settingsFilter,
     filterPaths,
@@ -29,27 +28,12 @@ var _            = require('lodash'),
      */
     settingsCache = {};
 
-/**
-* ### Updates Config Theme Settings
-* Maintains the cache of theme specific variables that are reliant on settings.
-* @private
-*/
-updateConfigTheme = function () {
-    config.set({
-        theme: {
-            title: (settingsCache.title && settingsCache.title.value) || '',
-            description: (settingsCache.description && settingsCache.description.value) || '',
-            logo: (settingsCache.logo && settingsCache.logo.value) || '',
-            cover: (settingsCache.cover && settingsCache.cover.value) || ''
-        }
-    });
-};
 
 /**
  * ### Update Settings Cache
  * Maintain the internal cache of the settings object
  * @public
- * @param {Object} settings
+ * @param settings
  * @returns {Settings}
  */
 updateSettingsCache = function (settings) {
@@ -60,16 +44,12 @@ updateSettingsCache = function (settings) {
             settingsCache[key] = setting;
         });
 
-        updateConfigTheme();
-
-        return Promise.resolve(settingsCache);
+        return when(settingsCache);
     }
 
     return dataProvider.Settings.findAll()
         .then(function (result) {
             settingsCache = readSettingsResult(result.models);
-
-            updateConfigTheme();
 
             return settingsCache;
         });
@@ -81,8 +61,8 @@ updateSettingsCache = function (settings) {
  * ### Settings Filter
  * Filters an object based on a given filter object
  * @private
- * @param {Object} settings
- * @param {String} filter
+ * @param settings
+ * @param filter
  * @returns {*}
  */
 settingsFilter = function (settings, filter) {
@@ -117,7 +97,7 @@ filterPaths = function (paths, active) {
     }
 
     _.each(pathKeys, function (key) {
-        // do not include hidden files or _messages
+        //do not include hidden files or _messages
         if (key.indexOf('.') !== 0 &&
                 key !== '_messages' &&
                 key !== 'README.md'
@@ -140,10 +120,11 @@ filterPaths = function (paths, active) {
     return res;
 };
 
+
 /**
  * ### Read Settings Result
  * @private
- * @param {Array} settingsModels
+ * @param settingsModels
  * @returns {Settings}
  */
 readSettingsResult = function (settingsModels) {
@@ -184,8 +165,8 @@ readSettingsResult = function (settingsModels) {
 /**
  * ### Settings Result
  * @private
- * @param {Object} settings
- * @param {String} type
+ * @param settings
+ * @param type
  * @returns {{settings: *}}
  */
 settingsResult = function (settings, type) {
@@ -207,7 +188,8 @@ settingsResult = function (settings, type) {
 /**
  * ### Populate Default Setting
  * @private
- * @param {String} key
+ * @param key
+ * @param type
  * @returns Promise(Setting)
  */
 populateDefaultSetting = function (key) {
@@ -218,16 +200,20 @@ populateDefaultSetting = function (key) {
 
         // Add to the settings cache
         return updateSettingsCache(readResult).then(function () {
+            // Try to update theme with the new settings
+            // if we're in the middle of populating, this might not work
+            return config.theme.update(settings, config.url).then(function () { return; }, function () { return; });
+        }).then(function () {
             // Get the result from the cache with permission checks
         });
-    }).catch(function (err) {
+    }).otherwise(function (err) {
         // Pass along NotFoundError
         if (typeof err === errors.NotFoundError) {
-            return Promise.reject(err);
+            return when.reject(err);
         }
 
         // TODO: Different kind of error?
-        return Promise.reject(new errors.NotFoundError('Problem finding setting: ' + key));
+        return when.reject(new errors.NotFoundError('Problem finding setting: ' + key));
     });
 };
 
@@ -235,20 +221,21 @@ populateDefaultSetting = function (key) {
  * ### Can Edit All Settings
  * Check that this edit request is allowed for all settings requested to be updated
  * @private
- * @param {Object} settingsInfo
+ * @param settingsInfo
  * @returns {*}
  */
 canEditAllSettings = function (settingsInfo, options) {
     var checkSettingPermissions = function (setting) {
             if (setting.type === 'core' && !(options.context && options.context.internal)) {
-                return Promise.reject(
+                return when.reject(
                     new errors.NoPermissionError('Attempted to access core setting from external request')
                 );
             }
 
             return canThis(options.context).edit.setting(setting.key).catch(function () {
-                return Promise.reject(new errors.NoPermissionError('You do not have permission to edit settings.'));
+                return when.reject(new errors.NoPermissionError('You do not have permission to edit settings.'));
             });
+
         },
         checks = _.map(settingsInfo, function (settingInfo) {
             var setting = settingsCache[settingInfo.key];
@@ -264,7 +251,7 @@ canEditAllSettings = function (settingsInfo, options) {
             return checkSettingPermissions(setting);
         });
 
-    return Promise.all(checks);
+    return when.all(checks);
 };
 
 /**
@@ -276,7 +263,7 @@ settings = {
 
     /**
      * ### Browse
-     * @param {Object} options
+     * @param options
      * @returns {*}
      */
     browse: function browse(options) {
@@ -294,7 +281,7 @@ settings = {
 
         // If there is no context, return only blog settings
         if (!options.context) {
-            return Promise.resolve(_.filter(result.settings, function (setting) { return setting.type === 'blog'; }));
+            return when(_.filter(result.settings, function (setting) { return setting.type === 'blog'; }));
         }
 
         // Otherwise return whatever this context is allowed to browse
@@ -310,12 +297,12 @@ settings = {
 
     /**
      * ### Read
-     * @param {Object} options
+     * @param options
      * @returns {*}
      */
     read: function read(options) {
         if (_.isString(options)) {
-            options = {key: options};
+            options = { key: options };
         }
 
         var getSettingsResult = function () {
@@ -325,19 +312,19 @@ settings = {
                 result[options.key] = setting;
 
                 if (setting.type === 'core' && !(options.context && options.context.internal)) {
-                    return Promise.reject(
+                    return when.reject(
                         new errors.NoPermissionError('Attempted to access core setting from external request')
                     );
                 }
 
                 if (setting.type === 'blog') {
-                    return Promise.resolve(settingsResult(result));
+                    return when(settingsResult(result));
                 }
 
                 return canThis(options.context).read.setting(options.key).then(function () {
                     return settingsResult(result);
                 }, function () {
-                    return Promise.reject(new errors.NoPermissionError('You do not have permission to read settings.'));
+                    return when.reject(new errors.NoPermissionError('You do not have permission to read settings.'));
                 });
             };
 
@@ -368,10 +355,10 @@ settings = {
 
         // Allow shorthand syntax where a single key and value are passed to edit instead of object and options
         if (_.isString(object)) {
-            object = {settings: [{key: object, value: options}]};
+            object = { settings: [{ key: object, value: options }]};
         }
 
-        // clean data
+        //clean data
         _.each(object.settings, function (setting) {
             if (!_.isString(setting.value)) {
                 setting.value = JSON.stringify(setting.value);
@@ -395,6 +382,8 @@ settings = {
                 var readResult = readSettingsResult(result);
 
                 return updateSettingsCache(readResult).then(function () {
+                    return config.theme.update(settings, config.url);
+                }).then(function () {
                     return settingsResult(readResult, type);
                 });
             });

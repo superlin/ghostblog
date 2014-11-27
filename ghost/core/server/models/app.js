@@ -2,6 +2,8 @@ var ghostBookshelf = require('./base'),
     App,
     Apps;
 
+
+
 App = ghostBookshelf.Model.extend({
     tableName: 'apps',
 
@@ -22,6 +24,7 @@ App = ghostBookshelf.Model.extend({
     },
 
     permissions: function () {
+        // Have to use the require here because of circular dependencies
         return this.belongsToMany('Permission', 'permissions_apps');
     },
 

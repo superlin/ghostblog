@@ -1,11 +1,12 @@
 
 var _           = require('lodash'),
-    Promise     = require('bluebird'),
+    when        = require('when'),
     errors      = require('../errors'),
     api         = require('../api'),
     loader      = require('./loader'),
     // Holds the available apps
     availableApps = {};
+
 
 function getInstalledApps() {
     return api.settings.read({context: {internal: true}, key: 'installedApps'}).then(function (response) {
@@ -16,7 +17,7 @@ function getInstalledApps() {
         try {
             installed = JSON.parse(installed.value);
         } catch (e) {
-            return Promise.reject(e);
+            return when.reject(e);
         }
 
         return installed;
@@ -48,8 +49,7 @@ module.exports = {
                 'Your apps will not be loaded.',
                 'Check your settings table for typos in the activeApps value. It should look like: ["app-1", "app2"] (double quotes required).'
             );
-
-            return Promise.resolve();
+            return when.resolve();
         }
 
         // Grab all installed apps, install any not already installed that are in appsToLoad.
@@ -59,7 +59,7 @@ module.exports = {
                     // After loading the app, add it to our hash of loaded apps
                     loadedApps[name] = loadedApp;
 
-                    return Promise.resolve(loadedApp);
+                    return when.resolve(loadedApp);
                 },
                 loadPromises = _.map(appsToLoad, function (app) {
                     // If already installed, just activate the app
@@ -77,13 +77,13 @@ module.exports = {
                     });
                 });
 
-            return Promise.all(loadPromises).then(function () {
+            return when.all(loadPromises).then(function () {
                 // Save our installed apps to settings
                 return saveInstalledApps(_.keys(loadedApps));
             }).then(function () {
                 // Extend the loadedApps onto the available apps
                 _.extend(availableApps, loadedApps);
-            }).catch(function (err) {
+            }).otherwise(function (err) {
                 errors.logError(
                     err.message || err,
                     'The app will not be loaded',

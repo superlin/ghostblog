@@ -5,8 +5,8 @@
 // rather than abstracted into a migration system. The upgrade function checks that its changes are safe before
 // making them.
 
-var Promise     = require('bluebird'),
-    sequence    = require('../../utils/sequence'),
+var when        = require('when'),
+    sequence    = require('when/sequence'),
     _           = require('lodash'),
     errors      = require('../../errors'),
     utils       = require('../../utils'),
@@ -24,6 +24,7 @@ var Promise     = require('bluebird'),
     // Public
     populate,
     update;
+
 
 logInfo = function logInfo(message) {
     errors.logInfo('Migrations', message);
@@ -100,7 +101,7 @@ populate = function () {
         });
     });
 
-    return Promise.all(ops).then(function () {
+    return when.all(ops).then(function () {
         return sequence(relations);
     }).then(function () {
         return permissions.populate(options);
@@ -149,7 +150,7 @@ to003 = function () {
     });
     ops.push(upgradeOp);
 
-    return Promise.all(ops).then(function () {
+    return when.all(ops).then(function () {
         return permissions.to003(options);
     }).then(function () {
         return convertAdminToOwner();
