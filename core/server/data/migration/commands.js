@@ -3,6 +3,7 @@ var  _               = require('lodash'),
     utils           = require('../utils'),
     schema          = require('../schema').tables,
 
+
     // private
     logInfo,
 
@@ -11,6 +12,7 @@ var  _               = require('lodash'),
     getAddCommands,
     addColumnCommands,
     modifyUniqueCommands;
+
 
 logInfo = function logInfo(message) {
     errors.logInfo('Migrations', message);
@@ -24,6 +26,7 @@ getDeleteCommands = function getDeleteCommands(oldTables, newTables) {
             return utils.deleteTable(table);
         };
     });
+
 };
 getAddCommands = function getAddCommands(oldTables, newTables) {
     var addTables = _.difference(newTables, oldTables);
@@ -48,7 +51,7 @@ addColumnCommands = function addColumnCommands(table, columns) {
 modifyUniqueCommands = function modifyUniqueCommands(table, indexes) {
     var columnKeys = _.keys(schema[table]);
     return _.map(columnKeys, function (column) {
-        if (schema[table][column].unique === true) {
+        if (schema[table][column].unique && schema[table][column].unique === true) {
             if (!_.contains(indexes, table + '_' + column + '_unique')) {
                 return function () {
                     logInfo('Adding unique on: ' + table + '.' + column);

@@ -61,9 +61,8 @@ function urlPathForPost(post, permalinks) {
             year:   function () { return moment(post.published_at).format('YYYY'); },
             month:  function () { return moment(post.published_at).format('MM'); },
             day:    function () { return moment(post.published_at).format('DD'); },
-            author: function () { return post.author.slug; },
-            slug:   function () { return post.slug; },
-            id:     function () { return post.id; }
+            slug: function () { return post.slug; },
+            id: function () { return post.id; }
         };
 
     if (post.page) {
@@ -102,14 +101,14 @@ function urlPathForPost(post, permalinks) {
 // This is probably not the right place for this, but it's the best place for now
 function urlFor(context, data, absolute) {
     var urlPath = '/',
-        secure, imagePathRe,
-        knownObjects = ['post', 'tag', 'author', 'image'],
+        secure,
+        knownObjects = ['post', 'tag', 'author'],
 
     // this will become really big
     knownPaths = {
-        home: '/',
-        rss: '/rss/',
-        api: '/ghost/api/v0.1'
+        'home': '/',
+        'rss': '/rss/',
+        'api': '/ghost/api/v0.1'
     };
 
     // Make data properly optional
@@ -134,14 +133,6 @@ function urlFor(context, data, absolute) {
         } else if (context === 'author' && data.author) {
             urlPath = '/author/' + data.author.slug + '/';
             secure = data.author.secure;
-        } else if (context === 'image' && data.image) {
-            urlPath = data.image;
-            imagePathRe = new RegExp('^' + ghostConfig.paths.subdir + '/' + ghostConfig.paths.imagesRelPath);
-            absolute = imagePathRe.test(data.image) ? absolute : false;
-            secure = data.image.secure;
-
-            // Remove the sub-directory from the URL because createUrl() will add it back.
-            urlPath = urlPath.replace(new RegExp('^' + ghostConfig.paths.subdir), '');
         }
         // other objects are recognised but not yet supported
     } else if (_.isString(context) && _.indexOf(_.keys(knownPaths), context) !== -1) {

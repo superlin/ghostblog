@@ -1,7 +1,7 @@
 var _              = require('lodash'),
     errors         = require('../errors'),
     ghostBookshelf = require('./base'),
-    Promise        = require('bluebird'),
+    when           = require('when'),
 
     Role,
     Roles;
@@ -39,6 +39,7 @@ Role = ghostBookshelf.Model.extend({
         return options;
     },
 
+
     permissible: function (roleModelOrId, action, context, loadedPermissions, hasUserPermission, hasAppPermission) {
         var self = this,
             checkAgainst = [],
@@ -59,11 +60,11 @@ Role = ghostBookshelf.Model.extend({
         }
 
         if (action === 'assign' && loadedPermissions.user) {
-            if (_.any(loadedPermissions.user.roles, {name: 'Owner'})) {
+            if (_.any(loadedPermissions.user.roles, { 'name': 'Owner' })) {
                 checkAgainst = ['Owner', 'Administrator', 'Editor', 'Author'];
-            } else if (_.any(loadedPermissions.user.roles, {name: 'Administrator'})) {
+            } else if (_.any(loadedPermissions.user.roles, { 'name': 'Administrator' })) {
                 checkAgainst = ['Administrator', 'Editor', 'Author'];
-            } else if (_.any(loadedPermissions.user.roles, {name: 'Editor'})) {
+            } else if (_.any(loadedPermissions.user.roles, { 'name': 'Editor' })) {
                 checkAgainst = ['Author'];
             }
 
@@ -72,10 +73,9 @@ Role = ghostBookshelf.Model.extend({
         }
 
         if (hasUserPermission && hasAppPermission) {
-            return Promise.resolve();
+            return when.resolve();
         }
-
-        return Promise.reject();
+        return when.reject();
     }
 });
 

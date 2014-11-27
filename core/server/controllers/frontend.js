@@ -8,13 +8,13 @@ var moment      = require('moment'),
     RSS         = require('rss'),
     _           = require('lodash'),
     url         = require('url'),
-    Promise     = require('bluebird'),
+    when        = require('when'),
+
     api         = require('../api'),
     config      = require('../config'),
-    filters     = require('../filters'),
+    filters     = require('../../server/filters'),
     template    = require('../helpers/template'),
     errors      = require('../errors'),
-    cheerio     = require('cheerio'),
 
     frontendControllers,
     staticPostPermalink,
@@ -84,37 +84,10 @@ function formatResponse(post) {
 
 function handleError(next) {
     return function (err) {
-        return next(err);
+        var e = new Error(err.message);
+        e.status = err.code;
+        return next(e);
     };
-}
-
-function setResponseContext(req, res, data) {
-    var contexts = [],
-        pageParam = req.params.page !== undefined ? parseInt(req.params.page, 10) : 1;
-
-    // paged context
-    if (!isNaN(pageParam) && pageParam > 1) {
-        contexts.push('paged');
-    }
-
-    if (req.route.path === '/page/:page/') {
-        contexts.push('index');
-    } else if (req.route.path === '/') {
-        contexts.push('home');
-        contexts.push('index');
-    } else if (/\/rss\/(:page\/)?$/.test(req.route.path)) {
-        contexts.push('rss');
-    } else if (/^\/tag\//.test(req.route.path)) {
-        contexts.push('tag');
-    } else if (/^\/author\//.test(req.route.path)) {
-        contexts.push('author');
-    } else if (data && data.post && data.post.page) {
-        contexts.push('page');
-    } else {
-        contexts.push('post');
-    }
-
-    res.locals.context = contexts;
 }
 
 // Add Request context parameter to the data object
@@ -169,6 +142,7 @@ frontendControllers = {
         }
 
         return getPostPage(options).then(function (page) {
+
             // If page is greater than number of pages we have, redirect to last page
             if (pageParam > page.meta.pagination.pages) {
                 return res.redirect(page.meta.pagination.pages === 1 ? config.paths.subdir + '/' : (config.paths.subdir + '/page/' + page.meta.pagination.pages + '/'));
@@ -187,13 +161,12 @@ frontendControllers = {
                         view = 'index';
                     }
 
-                    setResponseContext(req, res);
                     res.render(view, formatPageResponse(posts, page));
                 });
             });
-        }).catch(handleError(next));
+        }).otherwise(handleError(next));
     },
-    tag: function (req, res, next) {
+    'tag': function (req, res, next) {
         // Parse the page number
         var pageParam = req.params.page !== undefined ? parseInt(req.params.page, 10) : 1,
             options = {
@@ -231,7 +204,7 @@ frontendControllers = {
             // Render the page of posts
             filters.doFilter('prePostsRender', page.posts).then(function (posts) {
                 getActiveThemePaths().then(function (paths) {
-                    var view = template.getThemeViewForTag(paths, options.tag),
+                    var view = paths.hasOwnProperty('tag.hbs') ? 'tag' : 'index',
 
                         // Format data for template
                         result = _.extend(formatPageResponse(posts, page), {
@@ -242,19 +215,21 @@ frontendControllers = {
                     if (!result.tag) {
                         return next();
                     }
-                    setResponseContext(req, res);
                     res.render(view, result);
                 });
             });
-        }).catch(handleError(next));
+        }).otherwise(handleError(next));
     },
-    author: function (req, res, next) {
+    'author': function (req, res, next) {
+
         // Parse the page number
         var pageParam = req.params.page !== undefined ? parseInt(req.params.page, 10) : 1,
             options = {
                 page: pageParam,
                 author: req.params.slug
             };
+
+
 
         // Get url for tag page
         function authorUrl(author, page) {
@@ -297,15 +272,13 @@ frontendControllers = {
                     if (!result.author) {
                         return next();
                     }
-
-                    setResponseContext(req, res);
                     res.render(view, result);
                 });
             });
-        }).catch(handleError(next));
+        }).otherwise(handleError(next));
     },
 
-    single: function (req, res, next) {
+    'single': function (req, res, next) {
         var path = req.path,
             params,
             editFormat,
@@ -329,7 +302,7 @@ frontendControllers = {
                 // If there are still no matches then return.
                 if (staticPostPermalink.match(path) === false) {
                     // Reject promise chain with type 'NotFound'
-                    return Promise.reject(new errors.NotFoundError());
+                    return when.reject(new errors.NotFoundError());
                 }
 
                 permalink = staticPostPermalink;
@@ -356,26 +329,20 @@ frontendControllers = {
 
             function render() {
                 // If we're ready to render the page but the last param is 'edit' then we'll send you to the edit page.
-                if (params.edit) {
-                    params.edit = params.edit.toLowerCase();
-                }
                 if (params.edit === 'edit') {
                     return res.redirect(config.paths.subdir + '/ghost/editor/' + post.id + '/');
                 } else if (params.edit !== undefined) {
                     // reject with type: 'NotFound'
-                    return Promise.reject(new errors.NotFoundError());
+                    return when.reject(new errors.NotFoundError());
                 }
 
                 setReqCtx(req, post);
 
                 filters.doFilter('prePostsRender', post).then(function (post) {
                     getActiveThemePaths().then(function (paths) {
-                        var view = template.getThemeViewForPost(paths, post),
-                            response = formatResponse(post);
+                        var view = template.getThemeViewForPost(paths, post);
 
-                        setResponseContext(req, res, response);
-
-                        res.render(view, response);
+                        res.render(view, formatResponse(post));
                     });
                 });
             }
@@ -388,15 +355,6 @@ frontendControllers = {
                     return render();
                 }
 
-                return next();
-            }
-
-            // If there is an author parameter in the slug, check that the
-            // post is actually written by the given author\
-            if (params.author) {
-                if (post.author.slug === params.author) {
-                    return render();
-                }
                 return next();
             }
 
@@ -430,7 +388,8 @@ frontendControllers = {
             }
 
             return render();
-        }).catch(function (err) {
+
+        }).otherwise(function (err) {
             // If we've thrown an error message
             // of type: 'NotFound' then we found
             // no path match.
@@ -441,7 +400,7 @@ frontendControllers = {
             return handleError(next)(err);
         });
     },
-    rss: function (req, res, next) {
+    'rss': function (req, res, next) {
         function isPaginated() {
             return req.route.path.indexOf(':page') !== -1;
         }
@@ -472,13 +431,13 @@ frontendControllers = {
             return res.redirect(baseUrl);
         }
 
-        return Promise.all([
+        return when.settle([
             api.settings.read('title'),
             api.settings.read('description'),
             api.settings.read('permalinks')
         ]).then(function (result) {
-            var options = {};
 
+            var options = {};
             if (pageParam) { options.page = pageParam; }
             if (isTag()) { options.tag = slugParam; }
             if (isAuthor()) { options.author = slugParam; }
@@ -486,14 +445,16 @@ frontendControllers = {
             options.include = 'author,tags,fields';
 
             return api.posts.browse(options).then(function (page) {
-                var title = result[0].settings[0].value,
-                    description = result[1].settings[0].value,
-                    permalinks = result[2].settings[0],
+
+                var title = result[0].value.settings[0].value,
+                    description = result[1].value.settings[0].value,
+                    permalinks = result[2].value.settings[0],
                     majorMinor = /^(\d+\.)?(\d+)/,
                     trimmedVersion = res.locals.version,
                     siteUrl = config.urlFor('home', {secure: req.secure}, true),
                     feedUrl = config.urlFor('rss', {secure: req.secure}, true),
                     maxPage = page.meta.pagination.pages,
+                    feedItems = [],
                     feed;
 
                 trimmedVersion = trimmedVersion ? trimmedVersion.match(majorMinor)[0] : '?';
@@ -527,11 +488,11 @@ frontendControllers = {
                 }
 
                 setReqCtx(req, page.posts);
-                setResponseContext(req, res);
 
                 filters.doFilter('prePostsRender', page.posts).then(function (posts) {
                     posts.forEach(function (post) {
-                        var item = {
+                        var deferred = when.defer(),
+                            item = {
                                 title: post.title,
                                 guid: post.uuid,
                                 url: config.urlFor('post', {post: post, permalinks: permalinks}, true),
@@ -539,29 +500,33 @@ frontendControllers = {
                                 categories: _.pluck(post.tags, 'name'),
                                 author: post.author ? post.author.name : null
                             },
-                            htmlContent = cheerio.load(post.html, {decodeEntities: false});
+                            content = post.html;
 
-                        // convert relative resource urls to absolute
-                        ['href', 'src'].forEach(function (attributeName) {
-                            htmlContent('[' + attributeName + ']').each(function (ix, el) {
-                                el = htmlContent(el);
-
-                                var attributeValue = el.attr(attributeName);
-                                attributeValue = url.resolve(siteUrl, attributeValue);
-
-                                el.attr(attributeName, attributeValue);
-                            });
+                        //set img src to absolute url
+                        content = content.replace(/src=["|'|\s]?([\w\/\?\$\.\+\-;%:@&=,_]+)["|'|\s]?/gi, function (match, p1) {
+                            /*jslint unparam:true*/
+                            p1 = url.resolve(siteUrl, p1);
+                            return "src='" + p1 + "' ";
                         });
-
-                        item.description = htmlContent.html();
+                        //set a href to absolute url
+                        content = content.replace(/href=["|'|\s]?([\w\/\?\$\.\+\-;%:@&=,_]+)["|'|\s]?/gi, function (match, p1) {
+                            /*jslint unparam:true*/
+                            p1 = url.resolve(siteUrl, p1);
+                            return "href='" + p1 + "' ";
+                        });
+                        item.description = content;
                         feed.item(item);
+                        feedItems.push(deferred.promise);
+                        deferred.resolve();
                     });
-                }).then(function () {
+                });
+
+                when.all(feedItems).then(function () {
                     res.set('Content-Type', 'text/xml; charset=UTF-8');
                     res.send(feed.xml());
                 });
             });
-        }).catch(handleError(next));
+        }).otherwise(handleError(next));
     }
 };
 

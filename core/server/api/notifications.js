@@ -1,6 +1,6 @@
 // # Notifications API
 // RESTful API for creating notifications
-var Promise            = require('bluebird'),
+var when               = require('when'),
     _                  = require('lodash'),
     canThis            = require('../permissions').canThis,
     errors             = require('../errors'),
@@ -26,9 +26,9 @@ notifications = {
      */
     browse: function browse(options) {
         return canThis(options.context).browse.notification().then(function () {
-            return {notifications: notificationsStore};
+            return when({ 'notifications': notificationsStore });
         }, function () {
-            return Promise.reject(new errors.NoPermissionError('You do not have permission to browse notifications.'));
+            return when.reject(new errors.NoPermissionError('You do not have permission to browse notifications.'));
         });
     },
 
@@ -47,6 +47,7 @@ notifications = {
      * ```
      */
     add: function add(object, options) {
+
         var defaults = {
                 dismissible: true,
                 location: 'bottom',
@@ -61,17 +62,17 @@ notifications = {
 
                     notification = _.assign(defaults, notification, {
                         id: notificationCounter
-                        // status: 'persistent'
+                        //status: 'persistent'
                     });
 
                     notificationsStore.push(notification);
                     addedNotifications.push(notification);
                 });
 
-                return {notifications: addedNotifications};
+                return when({ notifications: addedNotifications});
             });
         }, function () {
-            return Promise.reject(new errors.NoPermissionError('You do not have permission to add notifications.'));
+            return when.reject(new errors.NoPermissionError('You do not have permission to add notifications.'));
         });
     },
 
@@ -89,21 +90,21 @@ notifications = {
             });
 
             if (notification && !notification.dismissible) {
-                return Promise.reject(
+                return when.reject(
                     new errors.NoPermissionError('You do not have permission to dismiss this notification.')
                 );
             }
 
             if (!notification) {
-                return Promise.reject(new errors.NotFoundError('Notification does not exist.'));
+                return when.reject(new errors.NotFoundError('Notification does not exist.'));
             }
 
             notificationsStore = _.reject(notificationsStore, function (element) {
                 return element.id === parseInt(options.id, 10);
             });
-            return {notifications: [notification]};
+            return when({notifications: [notification]});
         }, function () {
-            return Promise.reject(new errors.NoPermissionError('You do not have permission to destroy notifications.'));
+            return when.reject(new errors.NoPermissionError('You do not have permission to destroy notifications.'));
         });
     },
 
@@ -118,10 +119,9 @@ notifications = {
         return canThis(options.context).destroy.notification().then(function () {
             notificationsStore = [];
             notificationCounter = 0;
-
-            return notificationsStore;
+            return when(notificationsStore);
         }, function () {
-            return Promise.reject(new errors.NoPermissionError('You do not have permission to destroy notifications.'));
+            return when.reject(new errors.NoPermissionError('You do not have permission to destroy notifications.'));
         });
     }
 };

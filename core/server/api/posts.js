@@ -1,6 +1,6 @@
 // # Posts API
 // RESTful API for the Post resource
-var Promise         = require('bluebird'),
+var when            = require('when'),
     _               = require('lodash'),
     dataProvider    = require('../models'),
     canThis         = require('../permissions').canThis,
@@ -85,10 +85,11 @@ posts = {
 
         return dataProvider.Post.findOne(data, options).then(function (result) {
             if (result) {
-                return {posts: [result.toJSON()]};
+                return { posts: [ result.toJSON() ]};
             }
 
-            return Promise.reject(new errors.NotFoundError('Post not found.'));
+            return when.reject(new errors.NotFoundError('Post not found.'));
+
         });
     },
 
@@ -118,13 +119,13 @@ posts = {
                     if (result.updated('status') !== result.get('status')) {
                         post.statusChanged = true;
                     }
-                    return {posts: [post]};
+                    return { posts: [ post ]};
                 }
 
-                return Promise.reject(new errors.NotFoundError('Post not found.'));
+                return when.reject(new errors.NotFoundError('Post not found.'));
             });
         }, function () {
-            return Promise.reject(new errors.NoPermissionError('You do not have permission to edit posts.'));
+            return when.reject(new errors.NoPermissionError('You do not have permission to edit this post.'));
         });
     },
 
@@ -154,12 +155,13 @@ posts = {
                     // When creating a new post that is published right now, signal the change
                     post.statusChanged = true;
                 }
-                return {posts: [post]};
+                return { posts: [ post ]};
             });
         }, function () {
-            return Promise.reject(new errors.NoPermissionError('You do not have permission to add posts.'));
+            return when.reject(new errors.NoPermissionError('You do not have permission to add posts.'));
         });
     },
+
 
     /**
      * ### Destroy
@@ -186,7 +188,7 @@ posts = {
                 });
             });
         }, function () {
-            return Promise.reject(new errors.NoPermissionError('You do not have permission to remove posts.'));
+            return when.reject(new errors.NoPermissionError('You do not have permission to remove posts.'));
         });
     }
 

@@ -1,44 +1,35 @@
 /*jslint regexp: true */
 var _                          = require('lodash'),
     colors                     = require('colors'),
+    config                     = require('../config'),
     path                       = require('path'),
-    Promise                    = require('bluebird'),
+    when                       = require('when'),
     hbs                        = require('express-hbs'),
-    NotFoundError              = require('./not-found-error'),
-    BadRequestError            = require('./bad-request-error'),
-    InternalServerError        = require('./internal-server-error'),
-    NoPermissionError          = require('./no-permission-error'),
-    RequestEntityTooLargeError = require('./request-too-large-error'),
-    UnauthorizedError          = require('./unauthorized-error'),
-    ValidationError            = require('./validation-error'),
-    UnsupportedMediaTypeError  = require('./unsupported-media-type-error'),
-    EmailError                 = require('./email-error'),
-    DataImportError            = require('./data-import-error'),
-    config,
+    NotFoundError              = require('./notfounderror'),
+    BadRequestError            = require('./badrequesterror'),
+    InternalServerError        = require('./internalservererror'),
+    NoPermissionError          = require('./nopermissionerror'),
+    RequestEntityTooLargeError = require('./requesttoolargeerror'),
+    UnauthorizedError          = require('./unauthorizederror'),
+    ValidationError            = require('./validationerror'),
+    UnsupportedMediaTypeError  = require('./unsupportedmediaerror'),
+    EmailError                 = require('./emailerror'),
+    DataImportError            = require('./dataimporterror'),
     errors,
 
     // Paths for views
+    defaultErrorTemplatePath = path.resolve(config.paths.adminViews, 'user-error.hbs'),
     userErrorTemplateExists   = false;
 
 // This is not useful but required for jshint
 colors.setTheme({silly: 'rainbow'});
-
-// Shim right now to deal with circular dependencies.
-// @TODO(hswolff): remove circular dependency and lazy require.
-function getConfigModule() {
-    if (!config) {
-        config = require('../config');
-    }
-
-    return config;
-}
 
 /**
  * Basic error handling helpers
  */
 errors = {
     updateActiveTheme: function (activeTheme) {
-        userErrorTemplateExists = getConfigModule().paths.availableThemes[activeTheme].hasOwnProperty('error.hbs');
+        userErrorTemplateExists = config.paths.availableThemes[activeTheme].hasOwnProperty('error.hbs');
     },
 
     throwError: function (err) {
@@ -56,13 +47,14 @@ errors = {
     // ## Reject Error
     // Used to pass through promise errors when we want to handle them at a later time
     rejectError: function (err) {
-        return Promise.reject(err);
+        return when.reject(err);
     },
 
     logInfo: function (component, info) {
         if ((process.env.NODE_ENV === 'development' ||
             process.env.NODE_ENV === 'staging' ||
             process.env.NODE_ENV === 'production')) {
+
             var msg = [component.cyan + ':'.cyan, info.cyan];
 
             console.info.apply(console, msg);
@@ -73,7 +65,7 @@ errors = {
         if ((process.env.NODE_ENV === 'development' ||
             process.env.NODE_ENV === 'staging' ||
             process.env.NODE_ENV === 'production')) {
-            warn = warn || 'no message supplied';
+
             var msgs = ['\nWarning:'.yellow, warn.yellow, '\n'];
 
             if (context) {
@@ -107,25 +99,20 @@ errors = {
 
         stack = err ? err.stack : null;
 
-        if (!_.isString(err)) {
-            if (_.isObject(err) && _.isString(err.message)) {
-                err = err.message;
-            } else {
-                err = 'An unknown error occurred.';
-            }
-        }
-
+        err = _.isString(err) ? err : (_.isObject(err) ? err.message : 'An unknown error occurred.');
+        
         // Overwrite error to provide information that this is probably a permission problem
         // TODO: https://github.com/TryGhost/Ghost/issues/3687
         if (err.indexOf('SQLITE_READONLY') !== -1) {
-            context = 'Your database is in read only mode. Visitors can read your blog, but you can\'t log in or add posts.';
-            help = 'Check your database file and make sure that file owner and permissions are correct.';
+            context = "Your database is in read only mode. Visitors can read your blog, but you can't log in or add posts.";
+            help = "Check your database file and make sure that file owner and permissions are correct.";
         }
         // TODO: Logging framework hookup
         // Eventually we'll have better logging which will know about envs
         if ((process.env.NODE_ENV === 'development' ||
             process.env.NODE_ENV === 'staging' ||
             process.env.NODE_ENV === 'production')) {
+
             msgs = ['\nERROR:'.red, err.red, '\n'];
 
             if (context) {
@@ -198,8 +185,7 @@ errors = {
 
     renderErrorPage: function (code, err, req, res, next) {
         /*jshint unused:false*/
-        var self = this,
-            defaultErrorTemplatePath = path.resolve(getConfigModule().paths.adminViews, 'user-error.hbs');
+        var self = this;
 
         function parseStack(stack) {
             if (!_.isString(stack)) {
@@ -220,8 +206,8 @@ errors = {
                         }
 
                         return {
-                            function: parts[1],
-                            at: parts[2]
+                            'function': parts[1],
+                            'at': parts[2]
                         };
                     })
                     .filter(function (line) {

@@ -1,9 +1,11 @@
 var _               = require('lodash'),
-    Promise         = require('bluebird'),
-    sequence        = require('../../utils/sequence'),
+    when            = require('when'),
     path            = require('path'),
     fs              = require('fs'),
+    nodefn          = require('when/node'),
     errors          = require('../../errors'),
+    sequence        = require('when/sequence'),
+
     commands        = require('./commands'),
     versioning      = require('../versioning'),
     models          = require('../../models'),
@@ -45,7 +47,7 @@ backupDatabase = function backupDatabase() {
         return dataExport.fileName().then(function (fileName) {
             fileName = path.resolve(config.paths.contentPath + '/data/' + fileName);
 
-            return Promise.promisify(fs.writeFile)(fileName, JSON.stringify(exportedData)).then(function () {
+            return nodefn.call(fs.writeFile, fileName, JSON.stringify(exportedData)).then(function () {
                 logInfo('Database backup written to: ' + fileName);
             });
         });
@@ -78,7 +80,7 @@ init = function (tablesOnly) {
         if (databaseVersion === defaultVersion) {
             // 1. The database exists and is up-to-date
             logInfo('Up to date at version ' + databaseVersion);
-            return;
+            return when.resolve();
         }
 
         if (databaseVersion > defaultVersion) {
@@ -118,11 +120,11 @@ reset = function () {
 migrateUpFreshDb = function (tablesOnly) {
     var tableSequence,
         tables = _.map(schemaTables, function (table) {
-            return function () {
-                logInfo('Creating table: ' + table);
-                return utils.createTable(table);
-            };
-        });
+        return function () {
+            logInfo('Creating table: ' + table);
+            return utils.createTable(table);
+        };
+    });
     logInfo('Creating tables...');
     tableSequence = sequence(tables);
 
@@ -153,7 +155,7 @@ migrateUp = function (fromVersion, toVersion) {
     }).then(function () {
         migrateOps = migrateOps.concat(commands.getDeleteCommands(oldTables, schemaTables));
         migrateOps = migrateOps.concat(commands.getAddCommands(oldTables, schemaTables));
-        return Promise.all(
+        return when.all(
             _.map(oldTables, function (table) {
                 return utils.getIndexes(table).then(function (indexes) {
                     modifyUniCommands = modifyUniCommands.concat(commands.modifyUniqueCommands(table, indexes));
@@ -161,22 +163,23 @@ migrateUp = function (fromVersion, toVersion) {
             })
         );
     }).then(function () {
-        return Promise.all(
+        return when.all(
             _.map(oldTables, function (table) {
                 return utils.getColumns(table).then(function (columns) {
                     migrateOps = migrateOps.concat(commands.addColumnCommands(table, columns));
                 });
             })
         );
+
     }).then(function () {
         migrateOps = migrateOps.concat(_.compact(modifyUniCommands));
 
         // execute the commands in sequence
         if (!_.isEmpty(migrateOps)) {
             logInfo('Running migrations');
-
             return sequence(migrateOps);
         }
+        return;
     }).then(function () {
         return fixtures.update(fromVersion, toVersion);
     }).then(function () {
