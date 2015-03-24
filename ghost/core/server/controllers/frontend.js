@@ -400,6 +400,9 @@ frontendControllers = {
             return handleError(next)(err);
         });
     },
+    'show': function (req, res, next) {
+
+    },
     'rss': function (req, res, next) {
         function isPaginated() {
             return req.route.path.indexOf(':page') !== -1;
