@@ -203,8 +203,8 @@ jQuery(document).ready(function($) {
                     $("#contact-name").removeClass("has-error");
                 }
 
-			
-			
+
+
                 if (msg == 'success') {
 
                     response = '<div class="alert alert-success success-send">' +
@@ -293,7 +293,7 @@ jQuery(document).ready(function($) {
     /* ------------------------------ Google Maps --------------------------- */
     /* ---------------------------------------------------------------------- */
 
-    var map;
+    /*var map;
     function initialize() {
         map = new GMaps({
             div: '#map',
@@ -311,7 +311,7 @@ jQuery(document).ready(function($) {
                 content: '<p>Melbourne Victoria, 300, Australia</p>'
             }
         });
-    }
+    }*/
 
     /* ---------------------------------------------------------------------- */
     /* --------------------------------- Blog ------------------------------- */
@@ -463,15 +463,15 @@ jQuery(document).ready(function($) {
 
         return false;
     });
-	
+
 	//hash url page changer
 	if ("onhashchange" in window) {
 
 		var hash = location.hash;
-		
+
 		if (hash == "")
 			return false;
-		
+
 		var pages_array = [
 			'profile',
 			'resume',
@@ -479,15 +479,15 @@ jQuery(document).ready(function($) {
 			'blog',
 			'contact'
 		];
-		
-		var hash = hash.replace("#", ""); 
+
+		var hash = hash.replace("#", "");
 
 		if (!($.inArray(hash, pages_array) > -1)){
-			return false;	
+			return false;
 		}else{
 			$(".tabs-" + hash).trigger('click');
 		}
-		
+
 	}
 
 });
