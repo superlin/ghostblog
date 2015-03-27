@@ -232,7 +232,7 @@ jQuery(document).ready(function($) {
             errors.push("error-name");
         }
         if(message === ""){
-            errors.push("error-name");
+            errors.push("error-message");
         }
         var expr = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
         if(expr.test(email) == false){
