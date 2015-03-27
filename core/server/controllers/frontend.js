@@ -400,10 +400,8 @@ frontendControllers = {
             return handleError(next)(err);
         });
     },
-    'resume': function (req, res, next) {
-        var numParam = req.params.num !== undefined ? parseInt(req.params.num, 10) : 1;
-        if(numParam > 4) numParam = 1;
-        return res.render("resume"+numParam);
+    'show': function (req, res, next) {
+
     },
     'rss': function (req, res, next) {
         function isPaginated() {
