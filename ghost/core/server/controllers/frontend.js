@@ -118,7 +118,23 @@ function getActiveThemePaths() {
 
 frontendControllers = {
     'message': function(req, res, next){
-        res.json(req.body);
+        var data = req.body;
+        var errors = [];
+        if(data.name === ""){
+            errors.push("error-name");
+        }
+        if(data.message === ""){
+            errors.push("error-name");
+        }
+        var expr = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
+        if(expr.test(data.email)){
+            errors.push("error-email");
+        }
+        if(errors.length == 0){
+            res.send("success");
+        } else {
+            res.send(errors.join(","));
+        }
     },
     'about': function (req, res, next) {
         res.render('about');
