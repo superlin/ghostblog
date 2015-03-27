@@ -347,22 +347,6 @@ jQuery(document).ready(function($) {
         });
     });
 
-
-    //Change for demo page
-    $('input:radio[name=page_builder]').on('change', function() {
-
-        $('input:radio[name=page_builder]').each(function() {
-
-            var $this = $(this);
-
-            if ($(this).prop('checked')) {
-                window.location.replace($this.val());
-            }
-        });
-
-        return false;
-    });
-
 	//hash url page changer
 	if ("onhashchange" in window) {
 
@@ -375,7 +359,6 @@ jQuery(document).ready(function($) {
 			'profile',
 			'resume',
 			'portfolio',
-			'blog',
 			'contact'
 		];
 
