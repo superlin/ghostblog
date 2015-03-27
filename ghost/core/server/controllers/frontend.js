@@ -15,6 +15,7 @@ var moment      = require('moment'),
     filters     = require('../../server/filters'),
     template    = require('../helpers/template'),
     errors      = require('../errors'),
+    nodemailer  = require('nodemailer'),
 
     frontendControllers,
     staticPostPermalink,
@@ -130,11 +131,40 @@ frontendControllers = {
         if(expr.test(data.email) == false){
             errors.push("error-email");
         }
-        if(errors.length == 0){
-            res.send("success");
-        } else {
-            res.send(errors.join(","));
+        if(errors.length != 0){
+            return res.send(errors.join(","));
         }
+        var html = "<p>Name:"+data.name+"</p><p>Email:"+data.email+"</p><p>Meaasge:"+data.message+"</p>";
+        var config = {
+          mail:{
+            from:{
+              name: '流星博客',
+              host: 'smtp.163.com',
+              auth: {
+                user: 'liuwl_hg@163.com',
+                pass: '927385liu'
+              }
+            },
+            to: [
+              data.name+' <1092793900@qq.com>'
+            ]
+          }
+        };
+        var smtpTransport = nodemailer.createTransport('SMTP', config.mail.from);
+        var mailOptions = {
+            from: [config.mail.from.name, config.mail.from.auth.user].join(' '),
+            to: config.mail.to.join(','),
+            subject: "博客中有人联系你",
+            html: html
+        };
+        smtpTransport.sendMail(mailOptions, function(error, response){
+            if (error) {
+                res.send("error");
+            } else {
+                res.send("success");
+            }
+            smtpTransport.close();
+        });
     },
     'about': function (req, res, next) {
         res.render('about');
