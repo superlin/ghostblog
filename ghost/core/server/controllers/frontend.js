@@ -141,8 +141,8 @@ frontendControllers = {
               name: '流星博客',
               host: 'smtp.163.com',
               auth: {
-                user: 'liuwl_hg@163.com',
-                pass: '927385liu'
+                user: 'wlliu_hg@163.com',
+                pass: 'liuwanlin'
               }
             },
             to: [
