@@ -109,15 +109,8 @@ jQuery(document).ready(function($) {
             }
         });
 
-        // if (tab_name == "contact")
-        //     initialize();
-
         return false;
     });
-
-    // $("#verticalTab h2.resp-accordion").click(function() {
-    //     initialize();
-    // });
 
     /* ---------------------------------------------------------------------- */
     /* ---------------------- redimensionnement ----------------------------- */
@@ -151,10 +144,6 @@ jQuery(document).ready(function($) {
     // On lie l'événement resize à la fonction
     window.addEventListener('load', redimensionnement, false);
     window.addEventListener('resize', redimensionnement, false);
-
-    // $("#verticalTab h2.resp-accordion").click(function() {
-    //     initialize();
-    // });
 
     /* ---------------------------------------------------------------------- */
     /* -------------------------- Contact Form ------------------------------ */
@@ -288,106 +277,6 @@ jQuery(document).ready(function($) {
     });
 
 
-
-    /* ---------------------------------------------------------------------- */
-    /* ------------------------------ Google Maps --------------------------- */
-    /* ---------------------------------------------------------------------- */
-
-    /*var map;
-    function initialize() {
-        map = new GMaps({
-            div: '#map',
-            lat: -37.817917,
-            lng: 144.965065,
-            zoom: 16
-
-        });
-        map.addMarker({
-            lat: -37.81792,
-            lng: 144.96506,
-            title: 'Marker with InfoWindow',
-            icon: 'images/map-marker.png',
-            infoWindow: {
-                content: '<p>Melbourne Victoria, 300, Australia</p>'
-            }
-        });
-    }*/
-
-    /* ---------------------------------------------------------------------- */
-    /* --------------------------------- Blog ------------------------------- */
-    /* ---------------------------------------------------------------------- */
-
-    // More blog
-    $('a.read_m').click(function() {
-        var pagina = $(this).attr('href');
-        var postdetail = pagina + '-page';
-
-        if (pagina.indexOf("#post-") != -1) {
-
-            $('#blog-page').hide();
-
-            $(postdetail).show();
-            $(".tabs-blog").trigger('click');
-        }
-
-        return false;
-
-    });
-
-    // More blog
-    $('a.read_more').click(function() {
-        var pagina = $(this).attr('href');
-        var postdetail = pagina + '-page';
-
-        if (pagina.indexOf("#post-") != -1) {
-
-            $('#blog-page').hide();
-
-            $(postdetail).show();
-            $(".tabs-blog").trigger('click');
-        }
-
-        return false;
-
-    });
-
-    //pagination All
-    $('.content-post a').click(function() {
-        var pagina = $(this).attr('href');
-
-        if (pagina == "#blog") {
-
-            $('.content-post').hide();
-            $('#blog-page').show();
-            $(".tabs-blog").trigger('click');
-
-        }
-
-        return false;
-
-    });
-
-    //pagination blog
-    $('.content-post #pagination').click(function() {
-
-
-        var pagina = $(this).attr('href');
-        var postdetail = pagina + '-page';
-
-        if (pagina.indexOf("#post-") != -1) {
-
-            $('#blog-page').hide();
-            $('.content-post').hide();
-
-            $(postdetail).show();
-            $(".tabs-blog").trigger('click');
-        }
-
-        return false;
-
-    });
-
-
     /* ---------------------------------------------------------------------- */
     /* ---------------------------- icon menu ------------------------------- */
     /* ---------------------------------------------------------------------- */
@@ -450,7 +339,7 @@ jQuery(document).ready(function($) {
 
 
     //Change for demo page
-    $('input:radio[name=page_builder]').on('change', function() {
+    /*$('input:radio[name=page_builder]').on('change', function() {
 
         $('input:radio[name=page_builder]').each(function() {
 
@@ -462,7 +351,7 @@ jQuery(document).ready(function($) {
         });
 
         return false;
-    });
+    });*/
 
 	//hash url page changer
 	if ("onhashchange" in window) {
@@ -476,7 +365,6 @@ jQuery(document).ready(function($) {
 			'profile',
 			'resume',
 			'portfolio',
-			'blog',
 			'contact'
 		];
 
