@@ -39,7 +39,7 @@ frontendRoutes = function () {
     router.get('/about', frontend.about);
     router.get('/contact', frontend.contact);
     router.get('/show', frontend.show);
-	router.post('/message', frontend.message);
+	router.get('/message', frontend.message);
 
     router.get('/tags', frontend.tags);
 
