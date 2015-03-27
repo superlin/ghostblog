@@ -38,7 +38,7 @@ frontendRoutes = function () {
     //其他
     router.get('/about', frontend.about);
     router.get('/contact', frontend.contact);
-	router.get('/show', frontend.show);
+	router.get('/resume/:num', frontend.resume);
 
     router.get('/tags', frontend.tags);
 
