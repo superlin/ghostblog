@@ -109,15 +109,15 @@ jQuery(document).ready(function($) {
             }
         });
 
-        if (tab_name == "contact")
-            initialize();
+        // if (tab_name == "contact")
+        //     initialize();
 
         return false;
     });
 
-    $("#verticalTab h2.resp-accordion").click(function() {
-        initialize();
-    });
+    // $("#verticalTab h2.resp-accordion").click(function() {
+    //     initialize();
+    // });
 
     /* ---------------------------------------------------------------------- */
     /* ---------------------- redimensionnement ----------------------------- */
@@ -152,9 +152,9 @@ jQuery(document).ready(function($) {
     window.addEventListener('load', redimensionnement, false);
     window.addEventListener('resize', redimensionnement, false);
 
-    $("#verticalTab h2.resp-accordion").click(function() {
-        initialize();
-    });
+    // $("#verticalTab h2.resp-accordion").click(function() {
+    //     initialize();
+    // });
 
     /* ---------------------------------------------------------------------- */
     /* -------------------------- Contact Form ------------------------------ */
@@ -168,7 +168,7 @@ jQuery(document).ready(function($) {
     $('#contactform').submit(function() {
         $.ajax({
             type: "POST",
-            url: "php/contact.php",
+            url: "/message",
             data: $(this).serialize(),
             success: function(msg)
             {
