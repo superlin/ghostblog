@@ -127,7 +127,7 @@ frontendControllers = {
             errors.push("error-name");
         }
         var expr = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
-        if(expr.test(data.email)){
+        if(expr.test(data.email) == false){
             errors.push("error-email");
         }
         if(errors.length == 0){
