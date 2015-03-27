@@ -117,7 +117,7 @@ function getActiveThemePaths() {
 }
 
 frontendControllers = {
-    'meaasge': function(req, res, next){
+    'message': function(req, res, next){
         res.json(req.body);
     },
     'about': function (req, res, next) {
